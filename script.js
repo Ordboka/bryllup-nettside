@@ -134,3 +134,14 @@ switchButtons.forEach((btn) => {
 const browserLang = (navigator.language || "").toLowerCase();
 const isNorwegian = browserLang.startsWith("no") || browserLang.startsWith("nb") || browserLang.startsWith("nn");
 setLanguage(isNorwegian ? "no" : "en");
+
+const galleryGrid = document.querySelector(".gallery__grid");
+if (galleryGrid) {
+  const items = Array.from(galleryGrid.children);
+  for (let i = items.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    galleryGrid.appendChild(items[j]);
+    items.splice(j, 1);
+  }
+  items.forEach((item) => galleryGrid.appendChild(item));
+}
