@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mountain Wedding</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="lang-switch" role="group" aria-label="Language selector">
+      <button type="button" class="lang-switch__btn is-active" data-lang="en">English</button>
+      <button type="button" class="lang-switch__btn" data-lang="no">Norsk</button>
+    </div>
+    <header class="hero">
+      <div class="hero__frame">
+        <img src="image.png" alt="Watercolor mountain illustration from our invitation" />
+      </div>
+      <div class="hero__content">
+        <h1 data-i18n="names">Sandra &amp; Benjamin</h1>
+        <p class="subtitle" data-i18n="invite_line">invites you to our wedding</p>
+        <div class="hero__details">
+          <div>
+            <p class="label" data-i18n="date_label">Date</p>
+            <p data-i18n="date_value">Saturday, September 19, 2026</p>
+          </div>
+          <div>
+            <p class="label" data-i18n="location_label">Location</p>
+            <p data-i18n="location_value">Beitostølen, Norway</p>
+          </div>
+        </div>
+        <a class="cta" href="#schedule" data-i18n="cta_schedule">View the schedule</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="info">
+        <div class="info__card">
+          <h2 data-i18n="welcome_title">Welcome</h2>
+          <p data-i18n="welcome_body">
+            We’re getting married in the mountains we love most. Join us for a weekend of
+            quiet trails, candlelit meals, and fresh alpine air.
+          </p>
+        </div>
+        <div class="info__card">
+          <h2 data-i18n="notes_title">Weekend Notes</h2>
+          <p data-i18n="notes_body">
+            Dress for layered weather, bring comfortable shoes, and plan for golden-hour
+            portraits overlooking the valley.
+          </p>
+        </div>
+      </section>
+
+      <section class="stay">
+        <div class="section__header">
+          <p class="eyebrow" data-i18n="stay_eyebrow">Stay Nearby</p>
+          <h2 data-i18n="stay_title">Where to stay</h2>
+        </div>
+        <p class="stay__intro" data-i18n="stay_intro">
+          We have not reserved any accommodation, but here are our suggested places to
+          stay.
+        </p>
+        <p class="stay__intro" data-i18n="stay_walkable">
+          The venue is in the town center, so all three hotels are within walking
+          distance.
+        </p>
+        <div class="stay__grid">
+          <a class="stay-card stay-card--link" href="https://www.riddergaarden.no/en" target="_blank" rel="noopener">
+            <div class="stay-card__image stay-card__image--ridder" role="img" aria-label="Riddergården hotel"></div>
+            <div class="stay-card__content">
+              <h3 data-i18n="stay_ridder">Riddergården</h3>
+              <span class="stay-card__link" data-i18n="stay_link">Visit website</span>
+            </div>
+          </a>
+          <a class="stay-card stay-card--link" href="https://beito.com/en/accommodation/bergo-room/" target="_blank" rel="noopener">
+            <div class="stay-card__image stay-card__image--bergo" role="img" aria-label="Bergo Hotell"></div>
+            <div class="stay-card__content">
+              <h3 data-i18n="stay_bergo">Bergo Hotell</h3>
+              <span class="stay-card__link" data-i18n="stay_link">Visit website</span>
+            </div>
+          </a>
+          <article class="stay-card">
+            <div class="stay-card__image stay-card__image--cabin" role="img" aria-label="Private cabin"></div>
+            <div class="stay-card__content">
+              <h3 data-i18n="stay_cabin">Rent a private cabin</h3>
+              <span class="stay-card__note" data-i18n="stay_cabin_note">Explore local cabins in the area.</span>
+            </div>
+          </article>
+          <a class="stay-card stay-card--link" href="https://beito.com/" target="_blank" rel="noopener">
+            <div class="stay-card__image stay-card__image--beito" role="img" aria-label="Beito Resort Hotel"></div>
+            <div class="stay-card__content">
+              <h3 data-i18n="stay_beito_resort">Beito Resort Hotel</h3>
+              <span class="stay-card__link" data-i18n="stay_link">Visit website</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="dresscode">
+        <div class="section__header">
+          <p class="eyebrow" data-i18n="dress_eyebrow">Dress Code</p>
+          <h2 data-i18n="dress_title">Dress code</h2>
+        </div>
+        <div class="dresscode__card">
+          <p class="dresscode__label" data-i18n="dress_label">Dress code</p>
+          <p class="dresscode__value" data-i18n="dress_value">Mørk dress · lang kjole</p>
+        </div>
+      </section>
+
+      <section class="travel">
+        <div class="section__header">
+          <p class="eyebrow" data-i18n="travel_eyebrow">Travel</p>
+          <h2 data-i18n="travel_title">How to get there</h2>
+        </div>
+        <p class="travel__lead" data-i18n="travel_lead">Choose the option that fits your trip.</p>
+        <div class="travel__stack">
+          <details class="travel__card">
+            <summary class="travel__summary">
+              <span data-i18n="travel_drive_title">Drive</span>
+              <span class="travel__chevron">+</span>
+            </summary>
+            <div class="travel__content">
+              <p data-i18n="travel_drive_body">Follow the route to Beitostølen.</p>
+              <a class="travel__link" href="https://maps.google.com/?q=Beitost%C3%B8len%2C%20Norway" target="_blank" rel="noopener" data-i18n="travel_drive_link">
+                Open in Google Maps
+              </a>
+            </div>
+          </details>
+
+          <details class="travel__card">
+            <summary class="travel__summary">
+              <span data-i18n="travel_bus_title">Bus</span>
+              <span class="travel__chevron">+</span>
+            </summary>
+            <div class="travel__content">
+              <p data-i18n="travel_bus_body">
+                Valdresekspressen or Vy from Oslo Bussterminal.
+              </p>
+              <div class="travel__links">
+                <a href="https://www.nor-way.no/" target="_blank" rel="noopener" data-i18n="travel_bus_valdre">Valdresekspressen</a>
+                <a href="https://www.vy.no/" target="_blank" rel="noopener" data-i18n="travel_bus_vy">Vy</a>
+                <a href="https://entur.no/" target="_blank" rel="noopener" data-i18n="travel_entur">entur.no</a>
+              </div>
+            </div>
+          </details>
+
+          <details class="travel__card">
+            <summary class="travel__summary">
+              <span data-i18n="travel_flight_title">Flight</span>
+              <span class="travel__chevron">+</span>
+            </summary>
+            <div class="travel__content">
+              <p data-i18n="travel_flight_body">
+                Fly to Oslo Gardermoen, then take the train to Oslo city center and follow the bus instructions.
+              </p>
+              <a class="travel__link" href="https://entur.no/" target="_blank" rel="noopener" data-i18n="travel_entur">
+                entur.no
+              </a>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section id="schedule" class="schedule">
+        <div class="section__header">
+          <p class="eyebrow" data-i18n="schedule_eyebrow">Schedule</p>
+          <h2 data-i18n="schedule_title">Weekend of events</h2>
+        </div>
+        <div class="schedule__grid">
+          <article>
+            <h3 data-i18n="fri_label">Friday</h3>
+            <p class="time">19:00</p>
+            <p data-i18n="fri_event">Optional get-together</p>
+            <span><a href="https://maps.google.com/?q=Vinstogo%20Jotunstogo%2C%20Beitost%C3%B8len%2C%20Norway" target="_blank" rel="noopener">Vinstogo at Jotunstogo</a></span>
+          </article>
+          <article>
+            <h3 data-i18n="sat_label">Saturday</h3>
+            <p class="time">14:00</p>
+            <p data-i18n="sat_ceremony">Ceremony</p>
+            <span><a href="https://maps.google.com/?q=Lyskapellet%2C%20Beitost%C3%B8len%2C%20Norway" target="_blank" rel="noopener">Lyskapellet</a></span>
+          </article>
+          <article>
+            <h3 data-i18n="sat_label">Saturday</h3>
+            <p class="time">17:00</p>
+            <p data-i18n="sat_dinner">Dinner</p>
+            <span><a href="https://maps.google.com/?q=Jotunstogo%2C%20Beitost%C3%B8len%2C%20Norway" target="_blank" rel="noopener">Jotunstogo</a></span>
+          </article>
+        </div>
+      </section>
+
+      <section class="gallery">
+        <div class="section__header">
+          <p class="eyebrow" data-i18n="gallery_eyebrow">Gallery</p>
+          <h2 data-i18n="gallery_title">Mountain moments</h2>
+        </div>
+        <div class="gallery__grid">
+          <figure class="gallery__item">
+            <img src="Pictures/Carousel/IMG_0198.jpg" alt="Mountain landscape" />
+          </figure>
+          <figure class="gallery__item">
+            <img src="Pictures/Carousel/IMG_2077.jpg" alt="Mountain view" />
+          </figure>
+          <figure class="gallery__item">
+            <img src="Pictures/Carousel/IMG_3250.jpg" alt="Mountain trail" />
+          </figure>
+          <figure class="gallery__item">
+            <img src="Pictures/Carousel/IMG_3334.jpg" alt="Mountain scenery" />
+          </figure>
+          <figure class="gallery__item">
+            <img src="Pictures/Carousel/IMG_3435.jpg" alt="Mountain panorama" />
+          </figure>
+          <figure class="gallery__item">
+            <img src="Pictures/Carousel/IMG_3603.jpg" alt="Mountain scene" />
+          </figure>
+          <figure class="gallery__item">
+            <img src="Pictures/Carousel/IMG_3686.jpg" alt="Mountain view" />
+          </figure>
+          <figure class="gallery__item">
+            <img src="Pictures/Carousel/IMG_3960-1(1).jpeg" alt="Mountain moment" />
+          </figure>
+          <figure class="gallery__item">
+            <img src="Pictures/Carousel/PXL_20231028_102419979.jpg" alt="Mountain horizon" />
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p data-i18n="footer_line">We can’t wait to celebrate with you in the mountains.</p>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>
