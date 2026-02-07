@@ -144,4 +144,66 @@ if (galleryGrid) {
     items.splice(j, 1);
   }
   items.forEach((item) => galleryGrid.appendChild(item));
+
+  let isDragging = false;
+  let startX = 0;
+  let scrollStart = 0;
+  let targetScroll = 0;
+  let rafId = 0;
+
+  const smoothStep = () => {
+    const diff = targetScroll - galleryGrid.scrollLeft;
+    galleryGrid.scrollLeft += diff * 0.35;
+    if (Math.abs(diff) > 0.5) {
+      rafId = requestAnimationFrame(smoothStep);
+    } else {
+      galleryGrid.scrollLeft = targetScroll;
+      rafId = 0;
+    }
+  };
+
+  galleryGrid.addEventListener("pointerdown", (event) => {
+    if (event.pointerType !== "touch" && event.button !== 0) return;
+    isDragging = true;
+    startX = event.clientX;
+    scrollStart = galleryGrid.scrollLeft;
+    targetScroll = scrollStart;
+    galleryGrid.classList.add("is-dragging");
+    galleryGrid.setPointerCapture(event.pointerId);
+  });
+
+  galleryGrid.addEventListener("pointermove", (event) => {
+    if (!isDragging) return;
+    const delta = event.clientX - startX;
+    targetScroll = scrollStart - delta * 1.2;
+    if (!rafId) rafId = requestAnimationFrame(smoothStep);
+  });
+
+  const stopDrag = (event) => {
+    if (!isDragging) return;
+    isDragging = false;
+    galleryGrid.classList.remove("is-dragging");
+    galleryGrid.scrollLeft = targetScroll;
+    const itemsNow = Array.from(galleryGrid.children);
+    if (itemsNow.length) {
+      let closest = itemsNow[0];
+      let closestDist = Math.abs(closest.offsetLeft - galleryGrid.scrollLeft);
+      for (let i = 1; i < itemsNow.length; i += 1) {
+        const dist = Math.abs(itemsNow[i].offsetLeft - galleryGrid.scrollLeft);
+        if (dist < closestDist) {
+          closest = itemsNow[i];
+          closestDist = dist;
+        }
+      }
+      galleryGrid.scrollTo({ left: closest.offsetLeft, behavior: "smooth" });
+    }
+    if (event.pointerId !== undefined) {
+      galleryGrid.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  galleryGrid.addEventListener("pointerup", stopDrag);
+  galleryGrid.addEventListener("pointercancel", stopDrag);
+  galleryGrid.addEventListener("pointerleave", stopDrag);
+  galleryGrid.addEventListener("dragstart", (event) => event.preventDefault());
 }

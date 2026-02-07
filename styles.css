@@ -409,13 +409,18 @@ details[open] .travel__chevron {
 }
 
 .gallery__grid {
-  display: grid;
+  display: flex;
   gap: 1.25rem;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   margin-top: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
 }
 
 .gallery__item {
+  flex: 0 0 260px;
   min-height: 200px;
   border-radius: 18px;
   background: linear-gradient(160deg, rgba(201, 221, 227, 0.8), rgba(184, 117, 91, 0.15)),
@@ -423,6 +428,7 @@ details[open] .travel__chevron {
   border: 1px solid rgba(47, 43, 40, 0.08);
   position: relative;
   overflow: hidden;
+  scroll-snap-align: start;
 }
 
 .gallery__item img {
@@ -430,6 +436,13 @@ details[open] .travel__chevron {
   height: 100%;
   object-fit: cover;
   display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.gallery__grid.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
 }
 
 footer {
@@ -452,5 +465,9 @@ footer {
   .cta {
     width: 100%;
     text-align: center;
+  }
+
+  .gallery__item {
+    flex-basis: 220px;
   }
 }
