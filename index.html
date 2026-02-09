@@ -3,15 +3,26 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mountain Wedding</title>
+    <title data-i18n="page_title">Sandra &amp; Benjamin's wedding</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="lang-switch" role="group" aria-label="Language selector">
-      <button type="button" class="lang-switch__btn is-active" data-lang="en">English</button>
-      <button type="button" class="lang-switch__btn" data-lang="no">Norsk</button>
-    </div>
-    <header class="hero">
+    <header class="site-header">
+      <nav class="site-nav" aria-label="Primary">
+        <a href="#home" data-i18n="nav_home">Home</a>
+        <a href="#info" data-i18n="nav_info">Welcome &amp; info</a>
+        <a href="#stay" data-i18n="nav_stay">Where to stay</a>
+        <a href="#travel" data-i18n="nav_travel">Travel</a>
+        <a href="#schedule" data-i18n="nav_schedule">Schedule</a>
+        <a href="#gifts" data-i18n="nav_gifts">Gift list</a>
+        <a href="#gallery" data-i18n="nav_gallery">Gallery</a>
+      </nav>
+      <div class="lang-switch" role="group" aria-label="Language selector">
+        <button type="button" class="lang-switch__btn is-active" data-lang="en">🇬🇧 EN</button>
+        <button type="button" class="lang-switch__btn" data-lang="no">🇳🇴 NO</button>
+      </div>
+    </header>
+    <header id="home" class="hero">
       <div class="hero__frame">
         <img src="image.png" alt="Watercolor mountain illustration from our invitation" />
       </div>
@@ -28,12 +39,19 @@
             <p data-i18n="location_value">Beitostølen, Norway</p>
           </div>
         </div>
-        <a class="cta" href="#schedule" data-i18n="cta_schedule">View the schedule</a>
+        <div class="hero__cta-group">
+          <a class="cta" href="#info" data-i18n="cta_info">Info</a>
+          <a class="cta" href="#stay" data-i18n="cta_stay">Stay</a>
+          <a class="cta" href="#travel" data-i18n="cta_travel">Travel</a>
+          <a class="cta" href="#schedule" data-i18n="cta_schedule">View the schedule</a>
+          <a class="cta" href="#gifts" data-i18n="cta_gifts">Gift list</a>
+          <a class="cta" href="#gallery" data-i18n="cta_gallery">Gallery</a>
+        </div>
       </div>
     </header>
 
     <main>
-      <section class="info">
+      <section id="info" class="info">
         <div class="info__card">
           <h2 data-i18n="welcome_title">Welcome</h2>
           <p data-i18n="welcome_body">
@@ -42,17 +60,17 @@
           </p>
         </div>
         <div class="info__card">
-          <h2 data-i18n="notes_title">Weekend Notes</h2>
-          <p data-i18n="notes_body">
-            Dress for layered weather, bring comfortable shoes, and plan for golden-hour
-            portraits overlooking the valley.
-          </p>
+          <h2 data-i18n="dress_title">Dress code</h2>
+          <p data-i18n="dress_value">Mørk dress · lang kjole</p>
+        </div>
+        <div class="info__card">
+          <h2 data-i18n="rsvp_title">RSVP</h2>
+          <p data-i18n="rsvp_body">Please let one of us know if you can make it, by the 1st of July.</p>
         </div>
       </section>
 
-      <section class="stay">
+      <section id="stay" class="stay">
         <div class="section__header">
-          <p class="eyebrow" data-i18n="stay_eyebrow">Stay Nearby</p>
           <h2 data-i18n="stay_title">Where to stay</h2>
         </div>
         <p class="stay__intro" data-i18n="stay_intro">
@@ -95,20 +113,8 @@
         </div>
       </section>
 
-      <section class="dresscode">
+      <section id="travel" class="travel">
         <div class="section__header">
-          <p class="eyebrow" data-i18n="dress_eyebrow">Dress Code</p>
-          <h2 data-i18n="dress_title">Dress code</h2>
-        </div>
-        <div class="dresscode__card">
-          <p class="dresscode__label" data-i18n="dress_label">Dress code</p>
-          <p class="dresscode__value" data-i18n="dress_value">Mørk dress · lang kjole</p>
-        </div>
-      </section>
-
-      <section class="travel">
-        <div class="section__header">
-          <p class="eyebrow" data-i18n="travel_eyebrow">Travel</p>
           <h2 data-i18n="travel_title">How to get there</h2>
         </div>
         <p class="travel__lead" data-i18n="travel_lead">Choose the option that fits your trip.</p>
@@ -162,7 +168,6 @@
 
       <section id="schedule" class="schedule">
         <div class="section__header">
-          <p class="eyebrow" data-i18n="schedule_eyebrow">Schedule</p>
           <h2 data-i18n="schedule_title">Weekend of events</h2>
         </div>
         <div class="schedule__grid">
@@ -187,10 +192,19 @@
         </div>
       </section>
 
-      <section class="gallery">
+      <section id="gifts" class="gift">
         <div class="section__header">
-          <p class="eyebrow" data-i18n="gallery_eyebrow">Gallery</p>
-          <h2 data-i18n="gallery_title">Mountain moments</h2>
+          <h2 data-i18n="gift_title">Gift list</h2>
+        </div>
+        <p class="gift__body" data-i18n="gift_body">
+          This is a work in progress, and we will update this section closer to the event. However, we do not expect our
+          guests to bring a gift as we think celebrating this weekend with us is a gift enough!
+        </p>
+      </section>
+
+      <section id="gallery" class="gallery">
+        <div class="section__header">
+          <h2 data-i18n="gallery_title">Gallery</h2>
         </div>
         <div class="gallery__grid">
           <figure class="gallery__item">
