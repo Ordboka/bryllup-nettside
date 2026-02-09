@@ -1,18 +1,28 @@
 const translations = {
   en: {
+    page_title: "Sandra & Benjamin's wedding",
     names: "Sandra & Benjamin",
     invite_line: "invites you to our wedding",
     date_label: "Date",
     date_value: "Saturday, September 19, 2026",
     location_label: "Location",
     location_value: "Beitostølen, Norway",
+    cta_info: "Welcome and information",
+    cta_stay: "Where to stay",
+    cta_travel: "Travel",
     cta_schedule: "View the schedule",
+    cta_gifts: "Gift list",
+    cta_gallery: "Gallery",
+    nav_info: "Welcome & info",
+    nav_gifts: "Gift list",
+    nav_stay: "Where to stay",
+    nav_travel: "Travel",
+    nav_schedule: "Schedule",
+    nav_gallery: "Gallery",
+    nav_home: "Home",
     welcome_title: "Welcome",
     welcome_body:
-      "We’re getting married in the mountains we love most. Join us for a weekend of quiet trails, candlelit meals, and fresh alpine air.",
-    notes_title: "Weekend Notes",
-    notes_body:
-      "Dress for layered weather, bring comfortable shoes, and plan for golden-hour portraits overlooking the valley.",
+      "We are delighted to invite you to our wedding in Beitostølen, where Sandra grew up! On this page, we have gathered useful information for the weekend. If there is anything else, just get in touch with one of us.",
     stay_eyebrow: "Stay Nearby",
     stay_title: "Where to stay",
     stay_intro:
@@ -39,10 +49,14 @@ const translations = {
     travel_flight_body:
       "Fly to Oslo Gardermoen, then take the train to Oslo city center and follow the bus instructions.",
     travel_entur: "entur.no",
-    dress_eyebrow: "Dress Code",
     dress_title: "Dress code",
-    dress_label: "Dress code",
-    dress_value: "Mørk dress · lang kjole",
+    dress_value: "Dark suit · long dress",
+    rsvp_title: "RSVP",
+    rsvp_body: "Please let one of us know if you can make it, by the 1st of July.",
+    gift_eyebrow: "Gift list",
+    gift_title: "Gift list",
+    gift_body:
+      "This is a work in progress, and we will update this section closer to the event. However, we do not expect our guests to bring a gift as we think celebrating this weekend with us is a gift enough!",
     schedule_eyebrow: "Schedule",
     schedule_title: "Weekend of events",
     fri_label: "Friday",
@@ -51,23 +65,32 @@ const translations = {
     sat_ceremony: "Ceremony",
     sat_dinner: "Dinner",
     gallery_eyebrow: "Gallery",
-    gallery_title: "Mountain moments",
-    footer_line: "We can’t wait to celebrate with you in the mountains."
+    footer_line: "We can’t wait to celebrate with you."
   },
   no: {
+    page_title: "Sandra & Benjamins bryllup",
     names: "Sandra & Benjamin",
     invite_line: "inviterer deg til bryllupet vårt",
     date_label: "Dato",
     date_value: "Lørdag 19. september 2026",
     location_label: "Sted",
     location_value: "Beitostølen, Norge",
+    cta_info: "Informasjon",
+    cta_stay: "Hvor kan du bo",
+    cta_travel: "Reise",
     cta_schedule: "Se programmet",
+    cta_gifts: "Gaveliste",
+    cta_gallery: "Galleri",
+    nav_info: "Informasjon",
+    nav_gifts: "Gaveliste",
+    nav_stay: "Hvor kan du bo",
+    nav_travel: "Reise",
+    nav_schedule: "Program",
+    nav_gallery: "Galleri",
+    nav_home: "Hjem",
     welcome_title: "Velkommen",
     welcome_body:
-      "Vi gifter oss i fjellet vi er aller mest glad i. Bli med på en helg med stille stier, levende lys og frisk fjelluft.",
-    notes_title: "Helgeinfo",
-    notes_body:
-      "Kle deg for skiftende vær, ta med gode sko og planlegg for bilder i kveldslyset over dalen.",
+      "Vi har gleden av å invitere deg til bryllupet vårt på Beitostølen der Sandra vokste opp! På denne siden har vi samlet nyttig informasjon for helgen. Om det skulle være noe annet er det bare å ta kontakt med en av oss",
     stay_eyebrow: "Overnatting",
     stay_title: "Hvor kan du bo",
     stay_intro:
@@ -94,10 +117,14 @@ const translations = {
     travel_flight_body:
       "Fly til Oslo Gardermoen, og ta toget til Oslo sentrum og følg bussinstruksjonene.",
     travel_entur: "entur.no",
-    dress_eyebrow: "Kleskode",
     dress_title: "Kleskode",
-    dress_label: "Kleskode",
     dress_value: "Mørk dress · lang kjole",
+    rsvp_title: "Svar innen",
+    rsvp_body: "Gi en av oss beskjed om du kan komme innen 1. juli.",
+    gift_eyebrow: "Gaveliste",
+    gift_title: "Gaveliste",
+    gift_body:
+      "Gavelisten er under arbeid, og vi oppdaterer denne delen nærmere bryllupet. Vi forventer ikke at gjestene våre tar med gave, for vi synes det å feire denne helgen med oss er gave nok!",
     schedule_eyebrow: "Program",
     schedule_title: "Helgens program",
     fri_label: "Fredag",
@@ -106,8 +133,7 @@ const translations = {
     sat_ceremony: "Vielse",
     sat_dinner: "Middag",
     gallery_eyebrow: "Galleri",
-    gallery_title: "Fjelløyeblikk",
-    footer_line: "Vi gleder oss til å feire med dere i fjellet."
+    footer_line: "Vi gleder oss til å feire med dere."
   }
 };
 
