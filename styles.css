@@ -437,6 +437,12 @@ details[open] .travel__chevron {
   gap: 0.5rem;
 }
 
+.section__header h2 {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 500;
+  color: var(--clay);
+}
+
 .schedule__grid {
   display: grid;
   gap: 1.5rem;
