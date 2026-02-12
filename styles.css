@@ -316,13 +316,13 @@ span {
 .stay-card__image--ridder {
   background-image:
     linear-gradient(180deg, rgba(47, 43, 40, 0.08), rgba(47, 43, 40, 0.35)),
-    url('Pictures/Hotels/Riddergården.jpg');
+    url('Pictures/Hotels/Riddergården.webp');
 }
 
 .stay-card__image--bergo {
   background-image:
     linear-gradient(180deg, rgba(47, 43, 40, 0.08), rgba(47, 43, 40, 0.35)),
-    url('Pictures/Hotels/Bergo hotell.jpg');
+    url('Pictures/Hotels/Bergo hotell.webp');
 }
 
 .stay-card__image--cabin {
@@ -334,7 +334,7 @@ span {
 .stay-card__image--beito {
   background-image:
     linear-gradient(180deg, rgba(47, 43, 40, 0.08), rgba(47, 43, 40, 0.35)),
-    url('Pictures/Hotels/Beito resort.jpg');
+    url('Pictures/Hotels/Beito resort.webp');
 }
 
 .stay-card__content {
