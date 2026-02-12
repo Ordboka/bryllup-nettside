@@ -511,7 +511,8 @@ summary:focus-visible {
   scroll-snap-type: none;
   -webkit-overflow-scrolling: touch;
   cursor: grab;
-  touch-action: pan-y;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
 }
 
 .gallery__item {
@@ -538,6 +539,12 @@ summary:focus-visible {
 .gallery__grid.is-dragging {
   cursor: grabbing;
   scroll-snap-type: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .gallery__grid {
+    cursor: auto;
+  }
 }
 
 footer {

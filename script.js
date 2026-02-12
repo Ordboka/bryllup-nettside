@@ -200,45 +200,42 @@ if (galleryGrid) {
   }
   items.forEach((item) => galleryGrid.appendChild(item));
 
-  let isDragging = false;
-  let startX = 0;
-  let scrollStart = 0;
-  let targetScroll = 0;
-  let activePointerId = null;
+  const isFinePointer = window.matchMedia("(pointer: fine)").matches;
+  if (isFinePointer) {
+    let isDragging = false;
+    let startX = 0;
+    let scrollStart = 0;
+    let activePointerId = null;
 
-  galleryGrid.addEventListener("pointerdown", (event) => {
-    if (event.pointerType !== "touch" && event.button !== 0) return;
-    isDragging = true;
-    activePointerId = event.pointerId;
-    startX = event.clientX;
-    scrollStart = galleryGrid.scrollLeft;
-    targetScroll = scrollStart;
-    galleryGrid.classList.add("is-dragging");
-    galleryGrid.setPointerCapture(event.pointerId);
-  });
+    galleryGrid.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "mouse" || event.button !== 0) return;
+      isDragging = true;
+      activePointerId = event.pointerId;
+      startX = event.clientX;
+      scrollStart = galleryGrid.scrollLeft;
+      galleryGrid.classList.add("is-dragging");
+      galleryGrid.setPointerCapture(event.pointerId);
+    });
 
-  galleryGrid.addEventListener("pointermove", (event) => {
-    if (!isDragging || event.pointerId !== activePointerId) return;
-    const delta = event.clientX - startX;
-    targetScroll = scrollStart - delta;
-    galleryGrid.scrollLeft = targetScroll;
-    if (event.pointerType === "touch" && event.cancelable) {
-      event.preventDefault();
-    }
-  });
+    galleryGrid.addEventListener("pointermove", (event) => {
+      if (!isDragging || event.pointerId !== activePointerId) return;
+      const delta = event.clientX - startX;
+      galleryGrid.scrollLeft = scrollStart - delta;
+    });
 
-  const stopDrag = (event) => {
-    if (!isDragging || event.pointerId !== activePointerId) return;
-    isDragging = false;
-    activePointerId = null;
-    galleryGrid.classList.remove("is-dragging");
-    if (event.pointerId !== undefined) {
-      galleryGrid.releasePointerCapture(event.pointerId);
-    }
-  };
+    const stopDrag = (event) => {
+      if (!isDragging || event.pointerId !== activePointerId) return;
+      isDragging = false;
+      activePointerId = null;
+      galleryGrid.classList.remove("is-dragging");
+      if (event.pointerId !== undefined) {
+        galleryGrid.releasePointerCapture(event.pointerId);
+      }
+    };
 
-  galleryGrid.addEventListener("pointerup", stopDrag);
-  galleryGrid.addEventListener("pointercancel", stopDrag);
-  galleryGrid.addEventListener("pointerleave", stopDrag);
-  galleryGrid.addEventListener("dragstart", (event) => event.preventDefault());
+    galleryGrid.addEventListener("pointerup", stopDrag);
+    galleryGrid.addEventListener("pointercancel", stopDrag);
+    galleryGrid.addEventListener("pointerleave", stopDrag);
+    galleryGrid.addEventListener("dragstart", (event) => event.preventDefault());
+  }
 }
