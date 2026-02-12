@@ -220,7 +220,7 @@ if (galleryGrid) {
   galleryGrid.addEventListener("pointermove", (event) => {
     if (!isDragging || event.pointerId !== activePointerId) return;
     const delta = event.clientX - startX;
-    targetScroll = scrollStart - delta * 1.2;
+    targetScroll = scrollStart - delta;
     galleryGrid.scrollLeft = targetScroll;
     if (event.pointerType === "touch" && event.cancelable) {
       event.preventDefault();
@@ -232,19 +232,6 @@ if (galleryGrid) {
     isDragging = false;
     activePointerId = null;
     galleryGrid.classList.remove("is-dragging");
-    const itemsNow = Array.from(galleryGrid.children);
-    if (itemsNow.length) {
-      let closest = itemsNow[0];
-      let closestDist = Math.abs(closest.offsetLeft - galleryGrid.scrollLeft);
-      for (let i = 1; i < itemsNow.length; i += 1) {
-        const dist = Math.abs(itemsNow[i].offsetLeft - galleryGrid.scrollLeft);
-        if (dist < closestDist) {
-          closest = itemsNow[i];
-          closestDist = dist;
-        }
-      }
-      galleryGrid.scrollTo({ left: closest.offsetLeft, behavior: "smooth" });
-    }
     if (event.pointerId !== undefined) {
       galleryGrid.releasePointerCapture(event.pointerId);
     }

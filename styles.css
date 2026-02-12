@@ -508,7 +508,7 @@ summary:focus-visible {
   margin-top: 1.5rem;
   overflow-x: auto;
   padding-bottom: 0.5rem;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: none;
   -webkit-overflow-scrolling: touch;
   cursor: grab;
   touch-action: pan-y;
@@ -523,7 +523,7 @@ summary:focus-visible {
   border: 1px solid rgba(47, 43, 40, 0.08);
   position: relative;
   overflow: hidden;
-  scroll-snap-align: start;
+  scroll-snap-align: none;
 }
 
 .gallery__item img {
