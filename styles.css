@@ -517,7 +517,7 @@ summary:focus-visible {
 
 .gallery__item {
   flex: 0 0 260px;
-  min-height: 200px;
+  aspect-ratio: 4 / 5;
   border-radius: 18px;
   background: linear-gradient(160deg, rgba(201, 221, 227, 0.8), rgba(184, 117, 91, 0.15)),
     linear-gradient(120deg, rgba(108, 122, 85, 0.35), transparent 60%);
@@ -525,6 +525,7 @@ summary:focus-visible {
   position: relative;
   overflow: hidden;
   scroll-snap-align: none;
+  margin: 0;
 }
 
 .gallery__item img {
