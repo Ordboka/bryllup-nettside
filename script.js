@@ -141,6 +141,9 @@ const translations = {
 
 const switchButtons = document.querySelectorAll(".lang-switch__btn");
 const translatable = document.querySelectorAll("[data-i18n]");
+const siteHeader = document.querySelector(".site-header");
+const navToggle = document.querySelector(".nav-toggle");
+const navLinks = document.querySelectorAll(".site-nav a");
 
 const setLanguage = (lang) => {
   const dict = translations[lang];
@@ -163,6 +166,30 @@ const browserLang = (navigator.language || "").toLowerCase();
 const isNorwegian = browserLang.startsWith("no") || browserLang.startsWith("nb") || browserLang.startsWith("nn");
 setLanguage(isNorwegian ? "no" : "en");
 
+const closeMobileMenu = () => {
+  if (!siteHeader || !navToggle) return;
+  siteHeader.classList.remove("is-menu-open");
+  navToggle.setAttribute("aria-expanded", "false");
+  navToggle.setAttribute("aria-label", "Open navigation");
+};
+
+if (siteHeader && navToggle) {
+  navToggle.addEventListener("click", () => {
+    const willOpen = !siteHeader.classList.contains("is-menu-open");
+    siteHeader.classList.toggle("is-menu-open", willOpen);
+    navToggle.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    navToggle.setAttribute("aria-label", willOpen ? "Close navigation" : "Open navigation");
+  });
+
+  navLinks.forEach((link) => {
+    link.addEventListener("click", closeMobileMenu);
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) closeMobileMenu();
+  });
+}
+
 const galleryGrid = document.querySelector(".gallery__grid");
 if (galleryGrid) {
   const items = Array.from(galleryGrid.children);
@@ -177,22 +204,12 @@ if (galleryGrid) {
   let startX = 0;
   let scrollStart = 0;
   let targetScroll = 0;
-  let rafId = 0;
-
-  const smoothStep = () => {
-    const diff = targetScroll - galleryGrid.scrollLeft;
-    galleryGrid.scrollLeft += diff * 0.35;
-    if (Math.abs(diff) > 0.5) {
-      rafId = requestAnimationFrame(smoothStep);
-    } else {
-      galleryGrid.scrollLeft = targetScroll;
-      rafId = 0;
-    }
-  };
+  let activePointerId = null;
 
   galleryGrid.addEventListener("pointerdown", (event) => {
     if (event.pointerType !== "touch" && event.button !== 0) return;
     isDragging = true;
+    activePointerId = event.pointerId;
     startX = event.clientX;
     scrollStart = galleryGrid.scrollLeft;
     targetScroll = scrollStart;
@@ -201,17 +218,20 @@ if (galleryGrid) {
   });
 
   galleryGrid.addEventListener("pointermove", (event) => {
-    if (!isDragging) return;
+    if (!isDragging || event.pointerId !== activePointerId) return;
     const delta = event.clientX - startX;
     targetScroll = scrollStart - delta * 1.2;
-    if (!rafId) rafId = requestAnimationFrame(smoothStep);
+    galleryGrid.scrollLeft = targetScroll;
+    if (event.pointerType === "touch" && event.cancelable) {
+      event.preventDefault();
+    }
   });
 
   const stopDrag = (event) => {
-    if (!isDragging) return;
+    if (!isDragging || event.pointerId !== activePointerId) return;
     isDragging = false;
+    activePointerId = null;
     galleryGrid.classList.remove("is-dragging");
-    galleryGrid.scrollLeft = targetScroll;
     const itemsNow = Array.from(galleryGrid.children);
     if (itemsNow.length) {
       let closest = itemsNow[0];
