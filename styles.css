@@ -599,6 +599,10 @@ footer {
     position: sticky;
   }
 
+  .hero__cta-group {
+    display: none;
+  }
+
   .nav-toggle {
     display: inline-flex;
     align-items: center;
