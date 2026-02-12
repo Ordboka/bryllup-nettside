@@ -515,6 +515,24 @@ summary:focus-visible {
   overscroll-behavior-x: contain;
 }
 
+.gallery__challenge {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 1rem;
+  align-items: center;
+}
+
+.gallery__challenge p {
+  font-size: 1.05rem;
+  color: var(--pine);
+  font-weight: 500;
+}
+
+.gallery__guessr-btn {
+  min-width: 280px;
+}
+
 .gallery__item {
   flex: 0 0 260px;
   aspect-ratio: 4 / 5;
@@ -572,6 +590,10 @@ footer {
 
   .gallery__item {
     flex-basis: 220px;
+  }
+
+  .gallery__guessr-btn {
+    min-width: 100%;
   }
 }
 

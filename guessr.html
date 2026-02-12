@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SandraAndBenjaminGuessr</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="guessr.css" />
+  </head>
+  <body>
+    <header class="guessr-header">
+      <a class="guessr-back" href="index.html#gallery">← Back to gallery</a>
+      <h1>SandraAndBenjaminGuessr</h1>
+      <p>Guess where each photo was taken.</p>
+    </header>
+
+    <main class="guessr-main">
+      <section id="guessrStage" class="guessr-stage">
+        <div class="guessr-photo-panel">
+          <img id="roundPhoto" src="" alt="Guessr round photo" />
+        </div>
+
+        <div class="guessr-top-hud guessr-glass">
+          <p id="roundCount">Round: 1</p>
+          <p id="totalScore">Total: 0</p>
+        </div>
+
+        <p id="resultSummary" class="guessr-result-summary guessr-glass" aria-live="polite"></p>
+
+        <div class="guessr-bottom-hud guessr-glass">
+          <p id="statusText" class="guessr-status">Click on the map to place your guess.</p>
+          <div class="guessr-actions">
+            <button id="guessButton" type="button" class="guessr-btn">Guess</button>
+            <button id="nextButton" type="button" class="guessr-btn guessr-btn--secondary" disabled>Next round</button>
+          </div>
+        </div>
+
+        <section id="mapDock" class="guessr-map-dock guessr-glass" aria-label="World map for placing guess">
+          <div id="mapSurface" class="guessr-map"></div>
+        </section>
+
+        <section id="totalResultsPanel" class="guessr-total-results guessr-glass" hidden>
+          <h2>Your Total Score</h2>
+          <p id="finalTotalScore" class="guessr-total-score">0 / 25000</p>
+          <p id="finalSummaryLine" class="guessr-total-subline"></p>
+          <div id="roundReviewButtons" class="guessr-round-list"></div>
+          <div class="guessr-total-actions">
+            <a class="guessr-btn guessr-btn--ghost" href="index.html#gallery">Back to homepage</a>
+            <button id="playAgainButton" type="button" class="guessr-btn">Play again</button>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="photo-locations.js"></script>
+    <script src="guessr.js"></script>
+  </body>
+</html>

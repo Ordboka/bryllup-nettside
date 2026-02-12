@@ -1,0 +1,463 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+:root {
+  --pine: #314234;
+  --moss: #657958;
+  --stone: #a59b90;
+  --sand: #f0e5d7;
+  --clay: #b56f52;
+  --paper: #faf5ee;
+  --ink: #25211f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(181, 111, 82, 0.16), transparent 46%),
+    radial-gradient(circle at 78% 10%, rgba(101, 121, 88, 0.24), transparent 50%),
+    var(--paper);
+}
+
+.guessr-header {
+  padding: 1.1rem 5vw 0.8rem;
+}
+
+.guessr-back {
+  display: inline-block;
+  color: var(--pine);
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 0.45rem;
+}
+
+.guessr-header h1 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 4.2vw, 2.5rem);
+  color: var(--pine);
+}
+
+.guessr-header p {
+  margin: 0.15rem 0 0;
+  color: #5d554f;
+}
+
+.guessr-main {
+  padding: 0.3rem 3vw 2.2rem;
+}
+
+.guessr-stage {
+  position: relative;
+  width: min(1380px, 100%);
+  margin: 0 auto;
+  height: calc(100vh - 142px);
+  min-height: 540px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(37, 33, 31, 0.16);
+  box-shadow: 0 20px 42px rgba(37, 33, 31, 0.2);
+  background: #1c2220;
+}
+
+.guessr-stage.is-summary .guessr-bottom-hud,
+.guessr-stage.is-summary .guessr-top-hud,
+.guessr-stage.is-summary .guessr-result-summary,
+.guessr-stage.is-summary .guessr-map-dock,
+.guessr-stage.is-summary .guessr-photo-panel {
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.guessr-photo-panel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 14% 12%, rgba(181, 111, 82, 0.22), transparent 34%),
+    radial-gradient(circle at 85% 90%, rgba(101, 121, 88, 0.28), transparent 44%),
+    #202724;
+}
+
+.guessr-photo-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+.guessr-stage.is-result .guessr-photo-panel {
+  inset: auto 1rem 1rem auto;
+  width: 270px;
+  height: 170px;
+  z-index: 760;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.42);
+  transition: width 0.22s ease, height 0.22s ease, box-shadow 0.2s ease;
+  cursor: zoom-in;
+}
+
+.guessr-stage.is-result .guessr-photo-panel img {
+  object-fit: contain;
+  background: #1b211f;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .guessr-stage.is-result .guessr-photo-panel:hover,
+  .guessr-stage.is-result .guessr-photo-panel:focus-within {
+    width: min(810px, calc(100vw - 2rem));
+    height: min(510px, calc(100vh - 2rem));
+    box-shadow: 0 20px 42px rgba(0, 0, 0, 0.52);
+  }
+}
+
+.guessr-glass {
+  backdrop-filter: blur(8px);
+  background: rgba(18, 23, 21, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
+}
+
+.guessr-top-hud {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 450;
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  display: flex;
+  gap: 0.95rem;
+  font-weight: 600;
+  color: #f6eee4;
+}
+
+.guessr-result-summary {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  z-index: 530;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  color: #fff7ef;
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.guessr-stage.is-result .guessr-result-summary {
+  opacity: 1;
+}
+
+.guessr-bottom-hud {
+  position: absolute;
+  left: 1rem;
+  right: 19rem;
+  bottom: 1rem;
+  z-index: 450;
+  border-radius: 14px;
+  padding: 0.8rem 0.85rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.guessr-total-results {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 700;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 760px);
+  border-radius: 18px;
+  padding: 1.1rem;
+  color: #fff7ef;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.guessr-total-results[hidden] {
+  display: none !important;
+}
+
+.guessr-total-results h2 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+
+.guessr-total-score {
+  margin: 0;
+  font-size: clamp(1.4rem, 3.4vw, 2rem);
+  font-weight: 700;
+}
+
+.guessr-total-subline {
+  margin: 0;
+  color: #eadfce;
+}
+
+.guessr-round-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.guessr-round-review-btn {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff7ef;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  cursor: pointer;
+  min-height: 40px;
+}
+
+.guessr-total-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.guessr-map-dock {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 500;
+  width: 270px;
+  height: 170px;
+  border-radius: 14px;
+  padding: 0.45rem;
+  transition: width 0.24s ease, height 0.24s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.guessr-map-dock:hover,
+.guessr-map-dock:focus-within,
+.guessr-map-dock.is-expanded {
+  width: min(810px, 88vw);
+  height: min(510px, 72vh);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+  transform: translateY(-2px);
+}
+
+.guessr-stage.is-result .guessr-map-dock {
+  left: 1rem;
+  right: 1rem;
+  top: 1rem;
+  bottom: 1rem;
+  width: auto;
+  height: auto;
+  transform: none;
+}
+
+.guessr-stage.is-result .guessr-bottom-hud {
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 650;
+}
+
+.guessr-stage.is-result .guessr-top-hud {
+  z-index: 650;
+}
+
+.guessr-stage.is-result .guessr-result-summary {
+  z-index: 650;
+}
+
+.guessr-map {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.guessr-map:focus-visible {
+  outline: 3px solid #d8835f;
+  outline-offset: 2px;
+}
+
+.guessr-map .leaflet-control-zoom a {
+  color: #2f2b28;
+}
+
+.guess-pin,
+.answer-pin {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.guess-pin {
+  background: #e94e3d;
+}
+
+.answer-pin {
+  background: #2a8a3f;
+}
+
+.guessr-status {
+  margin: 0;
+  min-height: 1.4rem;
+  color: #f2eae1;
+}
+
+.guessr-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.guessr-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.58rem 1.2rem;
+  min-height: 44px;
+  background: var(--pine);
+  color: var(--paper);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guessr-btn--secondary {
+  background: var(--clay);
+}
+
+.guessr-btn--ghost {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.guessr-btn:disabled {
+  background: #b7afa8;
+  cursor: not-allowed;
+}
+
+.guessr-btn:focus-visible {
+  outline: 3px solid #d8835f;
+  outline-offset: 2px;
+}
+
+@media (max-width: 920px) {
+  .guessr-main {
+    padding: 0.2rem 0 1.5rem;
+  }
+
+  .guessr-stage {
+    width: 100%;
+    border-radius: 0;
+    height: calc(100vh - 116px);
+    min-height: 500px;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .guessr-stage.is-result .guessr-photo-panel {
+    right: 0.7rem;
+    bottom: 0.7rem;
+    width: 190px;
+    height: 130px;
+  }
+
+  .guessr-top-hud {
+    left: 0.7rem;
+    top: 0.7rem;
+    gap: 0.6rem;
+    padding: 0.45rem 0.65rem;
+  }
+
+  .guessr-result-summary {
+    top: 0.7rem;
+    max-width: calc(100% - 9rem);
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 0.45rem 0.7rem;
+  }
+
+  .guessr-bottom-hud {
+    left: 0.7rem;
+    right: 0.7rem;
+    bottom: 0.7rem;
+    padding: 0.7rem;
+  }
+
+  .guessr-total-results {
+    width: calc(100% - 1.4rem);
+    padding: 0.9rem;
+  }
+
+  .guessr-map-dock,
+  .guessr-map-dock:hover,
+  .guessr-map-dock:focus-within,
+  .guessr-map-dock.is-expanded {
+    right: 0.7rem;
+    bottom: 5.9rem;
+    width: min(320px, calc(100vw - 1.4rem));
+    height: 220px;
+    transform: none;
+  }
+
+  .guessr-stage.is-result .guessr-map-dock,
+  .guessr-stage.is-result .guessr-map-dock:hover,
+  .guessr-stage.is-result .guessr-map-dock:focus-within,
+  .guessr-stage.is-result .guessr-map-dock.is-expanded {
+    left: 0.7rem;
+    right: 0.7rem;
+    top: 0.7rem;
+    bottom: 0.7rem;
+    width: auto;
+    height: auto;
+  }
+
+  .guessr-stage.is-result .guessr-bottom-hud {
+    left: 0.7rem;
+    right: 0.7rem;
+    bottom: 0.7rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .guessr-header p {
+    display: none;
+  }
+
+  .guessr-btn {
+    min-height: 40px;
+    padding: 0.5rem 1rem;
+  }
+
+  .guessr-status {
+    font-size: 0.9rem;
+  }
+
+  .guessr-map-dock,
+  .guessr-map-dock:hover,
+  .guessr-map-dock:focus-within,
+  .guessr-map-dock.is-expanded {
+    width: min(300px, calc(100vw - 1.4rem));
+    height: 200px;
+    bottom: 6.1rem;
+  }
+
+  .guessr-stage.is-result .guessr-photo-panel {
+    width: 160px;
+    height: 112px;
+  }
+}
