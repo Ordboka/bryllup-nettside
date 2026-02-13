@@ -515,22 +515,23 @@ summary:focus-visible {
   overscroll-behavior-x: contain;
 }
 
-.gallery__challenge {
-  margin-top: 1rem;
+.gallery__guessr-wrap {
+  margin-top: 1.5rem;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem 1rem;
-  align-items: center;
-}
-
-.gallery__challenge p {
-  font-size: 1.05rem;
-  color: var(--pine);
-  font-weight: 500;
+  justify-content: center;
 }
 
 .gallery__guessr-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: auto;
   min-width: 280px;
+}
+
+.gallery__guessr-btn::before {
+  content: "🧭";
+  line-height: 1;
 }
 
 .gallery__item {
@@ -593,7 +594,8 @@ footer {
   }
 
   .gallery__guessr-btn {
-    min-width: 100%;
+    width: auto;
+    min-width: 0;
   }
 }
 

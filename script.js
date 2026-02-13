@@ -67,7 +67,7 @@ const translations = {
     gallery_eyebrow: "Gallery 📸",
     gallery_title: "Gallery 📸",
     gallery_guess_prompt: "Do you know where we are in the photos?",
-    gallery_guess_button: "Play SandraAndBenjaminGuessr",
+    gallery_guess_button: "SandraOgBenjaminGuessr",
     footer_line: "We can’t wait to celebrate with you."
   },
   no: {
@@ -138,7 +138,7 @@ const translations = {
     gallery_eyebrow: "Galleri 📸",
     gallery_title: "Galleri 📸",
     gallery_guess_prompt: "Vet du hvor vi er på bildene?",
-    gallery_guess_button: "Spill SandraAndBenjaminGuessr",
+    gallery_guess_button: "SandraOgBenjaminGuessr",
     footer_line: "Vi gleder oss til å feire med dere."
   }
 };
