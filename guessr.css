@@ -80,6 +80,9 @@ body {
   inset: 0;
   display: grid;
   place-items: center;
+  --photo-zoom: 1;
+  --photo-pan-x: 0px;
+  --photo-pan-y: 0px;
   background:
     radial-gradient(circle at 14% 12%, rgba(181, 111, 82, 0.22), transparent 34%),
     radial-gradient(circle at 85% 90%, rgba(101, 121, 88, 0.28), transparent 44%),
@@ -91,7 +94,63 @@ body {
   height: 100%;
   object-fit: contain;
   object-position: center;
+  transform: translate(var(--photo-pan-x), var(--photo-pan-y)) scale(var(--photo-zoom));
+  transform-origin: center;
+  transition: transform 0.14s ease;
   display: block;
+}
+
+.guessr-photo-panel.is-photo-zoomed {
+  cursor: grab;
+}
+
+.guessr-photo-panel.is-photo-zoomed img {
+  touch-action: none;
+}
+
+.guessr-photo-panel.is-photo-dragging {
+  cursor: grabbing;
+}
+
+.guessr-photo-panel.is-photo-dragging img {
+  transition: none;
+}
+
+.guessr-photo-controls {
+  position: absolute;
+  right: 0.55rem;
+  top: 0.55rem;
+  z-index: 3;
+  display: none;
+  gap: 0.35rem;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.35rem;
+}
+
+.guessr-stage.is-result .guessr-photo-controls {
+  display: inline-flex;
+}
+
+.guessr-photo-zoom-btn {
+  min-width: 2rem;
+  min-height: 2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff9f0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.guessr-photo-zoom-btn:focus-visible {
+  outline: 2px solid #d8835f;
+  outline-offset: 2px;
+}
+
+.guessr-photo-zoom-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .guessr-stage.is-result .guessr-photo-panel {
@@ -108,8 +167,21 @@ body {
   cursor: zoom-in;
 }
 
+.guessr-stage.is-result .guessr-photo-panel.is-expanded-photo {
+  width: min(720px, calc(100vw - 2rem));
+  aspect-ratio: 16 / 10;
+  height: auto;
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.52);
+  cursor: zoom-out;
+}
+
 .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo {
   width: 180px;
+  aspect-ratio: 3 / 4;
+}
+
+.guessr-stage.is-result .guessr-photo-panel.is-portrait-photo.is-expanded-photo {
+  width: min(420px, calc(100vw - 2rem));
   aspect-ratio: 3 / 4;
 }
 
@@ -124,16 +196,16 @@ body {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .guessr-stage.is-result .guessr-photo-panel:hover,
-  .guessr-stage.is-result .guessr-photo-panel:focus-within {
+  .guessr-stage.is-result .guessr-photo-panel:not(.is-expanded-photo):not(.is-photo-zoomed):hover,
+  .guessr-stage.is-result .guessr-photo-panel:not(.is-expanded-photo):not(.is-photo-zoomed):focus-within {
     width: min(720px, calc(100vw - 2rem));
     aspect-ratio: 16 / 10;
     height: auto;
     box-shadow: 0 20px 42px rgba(0, 0, 0, 0.52);
   }
 
-  .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo:hover,
-  .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo:focus-within {
+  .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo:not(.is-expanded-photo):not(.is-photo-zoomed):hover,
+  .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo:not(.is-expanded-photo):not(.is-photo-zoomed):focus-within {
     width: min(420px, calc(100vw - 2rem));
     aspect-ratio: 3 / 4;
   }
@@ -394,8 +466,18 @@ body {
     aspect-ratio: 16 / 10;
   }
 
+  .guessr-stage.is-result .guessr-photo-panel.is-expanded-photo {
+    width: min(560px, calc(100vw - 1.4rem));
+    aspect-ratio: 16 / 10;
+  }
+
   .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo {
     width: 140px;
+    aspect-ratio: 3 / 4;
+  }
+
+  .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo.is-expanded-photo {
+    width: min(340px, calc(100vw - 1.4rem));
     aspect-ratio: 3 / 4;
   }
 
@@ -484,8 +566,18 @@ body {
     aspect-ratio: 16 / 10;
   }
 
+  .guessr-stage.is-result .guessr-photo-panel.is-expanded-photo {
+    width: min(520px, calc(100vw - 1.4rem));
+    aspect-ratio: 16 / 10;
+  }
+
   .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo {
     width: 118px;
+    aspect-ratio: 3 / 4;
+  }
+
+  .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo.is-expanded-photo {
+    width: min(320px, calc(100vw - 1.4rem));
     aspect-ratio: 3 / 4;
   }
 }

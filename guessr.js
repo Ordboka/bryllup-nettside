@@ -19,6 +19,13 @@ const finalTotalScore = document.querySelector("#finalTotalScore");
 const finalSummaryLine = document.querySelector("#finalSummaryLine");
 const roundReviewButtons = document.querySelector("#roundReviewButtons");
 const playAgainButton = document.querySelector("#playAgainButton");
+const photoZoomOutButton = document.querySelector("#photoZoomOutButton");
+const photoZoomResetButton = document.querySelector("#photoZoomResetButton");
+const photoZoomInButton = document.querySelector("#photoZoomInButton");
+
+const PHOTO_ZOOM_MIN = 1;
+const PHOTO_ZOOM_MAX = 4;
+const PHOTO_ZOOM_STEP = 0.25;
 
 let map = null;
 let guessMapMarker = null;
@@ -33,6 +40,16 @@ let playablePhotos = [];
 let sessionResults = [];
 let guessLat = null;
 let guessLng = null;
+let photoZoom = PHOTO_ZOOM_MIN;
+let photoPanX = 0;
+let photoPanY = 0;
+let isPhotoDragging = false;
+let photoDragPointerId = null;
+let photoDragStartX = 0;
+let photoDragStartY = 0;
+let photoPanStartX = 0;
+let photoPanStartY = 0;
+let photoDragMoved = false;
 
 const isNumber = (value) => typeof value === "number" && Number.isFinite(value);
 
@@ -86,11 +103,72 @@ const pickRandomPhoto = () => {
   return remainingPhotos.splice(index, 1)[0];
 };
 
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+const getPhotoPanBounds = () => {
+  if (!photoPanel) {
+    return { maxX: 0, maxY: 0 };
+  }
+
+  const panelWidth = photoPanel.clientWidth;
+  const panelHeight = photoPanel.clientHeight;
+  if (!panelWidth || !panelHeight) {
+    return { maxX: 0, maxY: 0 };
+  }
+
+  return {
+    maxX: Math.max(0, (panelWidth * (photoZoom - 1)) / 2),
+    maxY: Math.max(0, (panelHeight * (photoZoom - 1)) / 2)
+  };
+};
+
+const setPhotoPan = (nextPanX, nextPanY) => {
+  if (!photoPanel) return;
+  const bounds = getPhotoPanBounds();
+  photoPanX = clamp(nextPanX, -bounds.maxX, bounds.maxX);
+  photoPanY = clamp(nextPanY, -bounds.maxY, bounds.maxY);
+  photoPanel.style.setProperty("--photo-pan-x", `${photoPanX}px`);
+  photoPanel.style.setProperty("--photo-pan-y", `${photoPanY}px`);
+};
+
+const resetPhotoPan = () => {
+  setPhotoPan(0, 0);
+};
+
+const setPhotoZoom = (nextZoom) => {
+  if (!photoPanel || !roundPhoto) return;
+  photoZoom = clamp(nextZoom, PHOTO_ZOOM_MIN, PHOTO_ZOOM_MAX);
+  photoPanel.style.setProperty("--photo-zoom", String(photoZoom));
+  photoPanel.classList.toggle("is-photo-zoomed", photoZoom > PHOTO_ZOOM_MIN);
+  if (photoZoom > PHOTO_ZOOM_MIN && (mode === "result" || mode === "review")) {
+    photoPanel.classList.add("is-expanded-photo");
+  }
+  photoPanel.classList.remove("is-photo-dragging");
+  isPhotoDragging = false;
+  photoDragPointerId = null;
+  if (photoZoomResetButton) {
+    photoZoomResetButton.textContent = `${Math.round(photoZoom * 100)}%`;
+  }
+  if (photoZoomOutButton) {
+    photoZoomOutButton.disabled = photoZoom <= PHOTO_ZOOM_MIN;
+  }
+  if (photoZoomInButton) {
+    photoZoomInButton.disabled = photoZoom >= PHOTO_ZOOM_MAX;
+  }
+  setPhotoPan(photoPanX, photoPanY);
+};
+
+const resetPhotoZoom = () => {
+  resetPhotoPan();
+  setPhotoZoom(PHOTO_ZOOM_MIN);
+};
+
 const syncResultPhotoPanelOrientation = () => {
   if (!photoPanel || !roundPhoto) return;
   if (!roundPhoto.naturalWidth || !roundPhoto.naturalHeight) return;
   const isPortrait = roundPhoto.naturalHeight > roundPhoto.naturalWidth;
   photoPanel.classList.toggle("is-portrait-photo", isPortrait);
+  setPhotoPan(photoPanX, photoPanY);
 };
 
 const setDataError = (message) => {
@@ -116,6 +194,10 @@ const showTotalResults = () => {
   if (guessrStage) {
     guessrStage.classList.add("is-summary");
   }
+  if (photoPanel) {
+    photoPanel.classList.remove("is-expanded-photo");
+  }
+  resetPhotoZoom();
 
   if (totalResultsPanel) {
     totalResultsPanel.hidden = false;
@@ -162,6 +244,9 @@ const showRoundReview = (index) => {
   if (guessrStage) {
     guessrStage.classList.add("is-result");
   }
+  if (photoPanel) {
+    photoPanel.classList.remove("is-expanded-photo");
+  }
 
   if (totalResultsPanel) {
     totalResultsPanel.hidden = true;
@@ -170,6 +255,7 @@ const showRoundReview = (index) => {
   currentPhoto = result.photo;
   roundPhoto.src = result.photo.src;
   roundPhoto.alt = result.photo.label || "Guessr round photo";
+  resetPhotoZoom();
 
   clearRoundMarkers();
   guessMapMarker = L.marker([result.guessLat, result.guessLng], { icon: markerIcon("guess-pin") }).addTo(map);
@@ -210,6 +296,10 @@ const startRound = () => {
   currentPhoto = pickRandomPhoto();
   roundPhoto.src = currentPhoto.src;
   roundPhoto.alt = currentPhoto.label || "Guessr round photo";
+  if (photoPanel) {
+    photoPanel.classList.remove("is-expanded-photo");
+  }
+  resetPhotoZoom();
 
   guessLat = null;
   guessLng = null;
@@ -404,5 +494,82 @@ guessButton.addEventListener("click", submitGuess);
 nextButton.addEventListener("click", handleNextButton);
 playAgainButton.addEventListener("click", restartGame);
 roundPhoto.addEventListener("load", syncResultPhotoPanelOrientation);
+roundPhoto.addEventListener("wheel", (event) => {
+  event.preventDefault();
+  const direction = event.deltaY < 0 ? 1 : -1;
+  setPhotoZoom(photoZoom + direction * PHOTO_ZOOM_STEP);
+}, { passive: false });
+
+if (photoPanel) {
+  photoPanel.addEventListener("pointerdown", (event) => {
+    if ((mode !== "result" && mode !== "review") || photoZoom <= PHOTO_ZOOM_MIN) return;
+    if (event.target instanceof HTMLElement && event.target.closest(".guessr-photo-zoom-btn")) return;
+    isPhotoDragging = true;
+    photoDragMoved = false;
+    photoDragPointerId = event.pointerId;
+    photoDragStartX = event.clientX;
+    photoDragStartY = event.clientY;
+    photoPanStartX = photoPanX;
+    photoPanStartY = photoPanY;
+    photoPanel.classList.add("is-photo-dragging");
+    photoPanel.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  });
+
+  photoPanel.addEventListener("pointermove", (event) => {
+    if (!isPhotoDragging || event.pointerId !== photoDragPointerId) return;
+    const deltaX = event.clientX - photoDragStartX;
+    const deltaY = event.clientY - photoDragStartY;
+    if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
+      photoDragMoved = true;
+    }
+    setPhotoPan(photoPanStartX + deltaX, photoPanStartY + deltaY);
+  });
+
+  const stopPhotoDrag = (event) => {
+    if (!isPhotoDragging || event.pointerId !== photoDragPointerId) return;
+    isPhotoDragging = false;
+    photoDragPointerId = null;
+    photoPanel.classList.remove("is-photo-dragging");
+    if (photoPanel.hasPointerCapture(event.pointerId)) {
+      photoPanel.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  photoPanel.addEventListener("pointerup", stopPhotoDrag);
+  photoPanel.addEventListener("pointercancel", stopPhotoDrag);
+  photoPanel.addEventListener("transitionend", (event) => {
+    if (event.propertyName === "width" || event.propertyName === "height") {
+      setPhotoPan(photoPanX, photoPanY);
+    }
+  });
+
+  photoPanel.addEventListener("click", (event) => {
+    if (mode !== "result" && mode !== "review") return;
+    if (event.target instanceof HTMLElement && event.target.closest(".guessr-photo-zoom-btn")) return;
+    if (photoDragMoved) {
+      photoDragMoved = false;
+      return;
+    }
+    if (photoZoom > PHOTO_ZOOM_MIN) return;
+    photoPanel.classList.toggle("is-expanded-photo");
+  });
+}
+
+if (photoZoomOutButton) {
+  photoZoomOutButton.addEventListener("click", () => setPhotoZoom(photoZoom - PHOTO_ZOOM_STEP));
+}
+
+if (photoZoomResetButton) {
+  photoZoomResetButton.addEventListener("click", resetPhotoZoom);
+}
+
+if (photoZoomInButton) {
+  photoZoomInButton.addEventListener("click", () => setPhotoZoom(photoZoom + PHOTO_ZOOM_STEP));
+}
+
+window.addEventListener("resize", () => setPhotoPan(photoPanX, photoPanY));
+
+resetPhotoZoom();
 
 init();
