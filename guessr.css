@@ -513,6 +513,10 @@ body {
   justify-content: center;
 }
 
+.guessr-actions .guessr-btn[hidden] {
+  display: none !important;
+}
+
 .guessr-btn--secondary {
   background: var(--clay);
 }

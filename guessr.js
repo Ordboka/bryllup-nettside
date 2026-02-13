@@ -236,6 +236,7 @@ const refreshLocalizedUi = () => {
       button.textContent = t("round_review_button", { round: result.round, score: result.score });
     });
   }
+  updateActionButtons();
 };
 
 const setLanguage = (lang) => {
@@ -540,6 +541,7 @@ const setDataError = (message) => {
   statusText.textContent = message;
   guessButton.disabled = true;
   nextButton.disabled = true;
+  updateActionButtons();
 };
 
 const updateHud = () => {
@@ -549,6 +551,32 @@ const updateHud = () => {
     roundCount.textContent = t("hud_round", { current: currentRoundNumber, max: MAX_ROUNDS });
   }
   totalScore.textContent = t("hud_total", { score: accumulatedScore });
+};
+
+const updateActionButtons = () => {
+  if (!guessButton || !nextButton) return;
+
+  if (mode === "summary") {
+    guessButton.hidden = true;
+    nextButton.hidden = true;
+    return;
+  }
+
+  if (mode === "playing") {
+    const canSubmitGuess = isNumber(guessLat) && isNumber(guessLng) && !guessButton.disabled;
+    guessButton.hidden = !canSubmitGuess;
+    nextButton.hidden = true;
+    return;
+  }
+
+  if (mode === "result" || mode === "review") {
+    guessButton.hidden = true;
+    nextButton.hidden = false;
+    return;
+  }
+
+  guessButton.hidden = true;
+  nextButton.hidden = true;
 };
 
 const clearStageModes = () => {
@@ -603,6 +631,7 @@ const showTotalResults = () => {
   statusText.textContent = t("status_game_finished");
   guessButton.disabled = true;
   nextButton.disabled = true;
+  updateActionButtons();
 };
 
 const showRoundReview = (index) => {
@@ -651,6 +680,7 @@ const showRoundReview = (index) => {
   guessButton.disabled = true;
   nextButton.disabled = false;
   nextButton.textContent = t("button_back_to_total_results");
+  updateActionButtons();
 
   setTimeout(refreshMapSize, 20);
   setTimeout(refreshMapSize, 260);
@@ -686,6 +716,7 @@ const startRound = () => {
   nextButton.disabled = true;
   nextButton.textContent = getNextButtonLabel();
   updateHud();
+  updateActionButtons();
 
   map.setView([20, 0], 2);
   setTimeout(refreshMapSize, 20);
@@ -705,6 +736,7 @@ const placeGuess = (lat, lng) => {
 
   statusText.textContent = t("status_guess_placed");
   guessButton.disabled = false;
+  updateActionButtons();
 };
 
 const submitGuess = () => {
@@ -777,6 +809,7 @@ const submitGuess = () => {
     nextButton.disabled = true;
     setTimeout(showTotalResults, 900);
   }
+  updateActionButtons();
 
   setTimeout(refreshMapSize, 20);
   setTimeout(refreshMapSize, 300);
