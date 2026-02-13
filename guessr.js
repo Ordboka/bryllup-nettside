@@ -261,6 +261,28 @@ const formatDistance = (distanceKm) => {
   return `${Math.round(distanceKm)} km`;
 };
 
+const normalizeLng = (lng) => {
+  const normalized = ((lng + 180) % 360 + 360) % 360 - 180;
+  return normalized === -180 ? 180 : normalized;
+};
+
+const wrapLngNear = (targetLng, referenceLng) => {
+  const reference = normalizeLng(referenceLng);
+  let wrapped = normalizeLng(targetLng);
+  while (wrapped - reference > 180) wrapped -= 360;
+  while (wrapped - reference < -180) wrapped += 360;
+  return wrapped;
+};
+
+const getDisplayPoints = (guessLatValue, guessLngValue, answerLatValue, answerLngValue) => {
+  const guessLngWrapped = normalizeLng(guessLngValue);
+  const answerLngWrapped = wrapLngNear(answerLngValue, guessLngWrapped);
+  return {
+    guess: [guessLatValue, guessLngWrapped],
+    answer: [answerLatValue, answerLngWrapped]
+  };
+};
+
 const markerIcon = (className) =>
   L.divIcon({
     className,
@@ -480,13 +502,11 @@ const showRoundReview = (index) => {
   resetPhotoZoom();
 
   clearRoundMarkers();
-  guessMapMarker = L.marker([result.guessLat, result.guessLng], { icon: markerIcon("guess-pin") }).addTo(map);
-  answerMapMarker = L.marker([result.answerLat, result.answerLng], { icon: markerIcon("answer-pin") }).addTo(map);
+  const displayPoints = getDisplayPoints(result.guessLat, result.guessLng, result.answerLat, result.answerLng);
+  guessMapMarker = L.marker(displayPoints.guess, { icon: markerIcon("guess-pin") }).addTo(map);
+  answerMapMarker = L.marker(displayPoints.answer, { icon: markerIcon("answer-pin") }).addTo(map);
   map.fitBounds(
-    [
-      [result.guessLat, result.guessLng],
-      [result.answerLat, result.answerLng]
-    ],
+    [displayPoints.guess, displayPoints.answer],
     { padding: [35, 35], maxZoom: 19 }
   );
 
@@ -572,12 +592,15 @@ const submitGuess = () => {
     guessrStage.classList.add("is-result");
   }
 
-  answerMapMarker = L.marker([currentPhoto.lat, currentPhoto.lng], { icon: markerIcon("answer-pin") }).addTo(map);
+  const displayPoints = getDisplayPoints(guessLat, guessLng, currentPhoto.lat, currentPhoto.lng);
+  if (guessMapMarker) {
+    guessMapMarker.setLatLng(displayPoints.guess);
+  } else {
+    guessMapMarker = L.marker(displayPoints.guess, { icon: markerIcon("guess-pin") }).addTo(map);
+  }
+  answerMapMarker = L.marker(displayPoints.answer, { icon: markerIcon("answer-pin") }).addTo(map);
   map.fitBounds(
-    [
-      [guessLat, guessLng],
-      [currentPhoto.lat, currentPhoto.lng]
-    ],
+    [displayPoints.guess, displayPoints.answer],
     { padding: [35, 35], maxZoom: 19 }
   );
 
