@@ -29,12 +29,40 @@ body {
   padding: 1.1rem 5vw 0.8rem;
 }
 
+.guessr-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
 .guessr-back {
   display: inline-block;
   color: var(--pine);
   text-decoration: none;
   font-weight: 600;
   margin-bottom: 0.45rem;
+}
+
+.lang-switch {
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.lang-switch__btn {
+  border: 1px solid rgba(37, 33, 31, 0.22);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lang-switch__btn.is-active {
+  background: var(--pine);
+  color: #f7f1ea;
+  border-color: var(--pine);
 }
 
 .guessr-header h1 {
@@ -539,6 +567,15 @@ body {
 }
 
 @media (max-width: 680px) {
+  .guessr-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .guessr-back {
+    margin-bottom: 0;
+  }
+
   .guessr-header p {
     display: none;
   }

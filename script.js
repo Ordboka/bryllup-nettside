@@ -148,6 +148,24 @@ const translatable = document.querySelectorAll("[data-i18n]");
 const siteHeader = document.querySelector(".site-header");
 const navToggle = document.querySelector(".nav-toggle");
 const navLinks = document.querySelectorAll(".site-nav a");
+const LANGUAGE_STORAGE_KEY = "wedding_lang";
+
+const getStoredLanguage = () => {
+  try {
+    const value = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    return value === "en" || value === "no" ? value : null;
+  } catch (_error) {
+    return null;
+  }
+};
+
+const setStoredLanguage = (lang) => {
+  try {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+  } catch (_error) {
+    // Ignore storage errors (private mode / blocked storage).
+  }
+};
 
 const setLanguage = (lang) => {
   const dict = translations[lang];
@@ -160,6 +178,7 @@ const setLanguage = (lang) => {
   switchButtons.forEach((btn) =>
     btn.classList.toggle("is-active", btn.dataset.lang === lang)
   );
+  setStoredLanguage(lang);
 };
 
 switchButtons.forEach((btn) => {
@@ -168,7 +187,7 @@ switchButtons.forEach((btn) => {
 
 const browserLang = (navigator.language || "").toLowerCase();
 const isNorwegian = browserLang.startsWith("no") || browserLang.startsWith("nb") || browserLang.startsWith("nn");
-setLanguage(isNorwegian ? "no" : "en");
+setLanguage(getStoredLanguage() || (isNorwegian ? "no" : "en"));
 
 const closeMobileMenu = () => {
   if (!siteHeader || !navToggle) return;

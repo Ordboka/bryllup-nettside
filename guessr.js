@@ -2,6 +2,77 @@ const MAX_ROUNDS = 5;
 const SCORE_MAX = 5000;
 const SCORE_SCALE_KM = 1492.7;
 const EARTH_RADIUS_KM = 6371;
+const LANGUAGE_STORAGE_KEY = "wedding_lang";
+const switchButtons = document.querySelectorAll(".lang-switch__btn");
+const translatable = document.querySelectorAll("[data-i18n]");
+const photoControls = document.querySelector("#photoControls");
+
+const translations = {
+  en: {
+    page_title: "SandraOgBenjaminGuessr",
+    back_to_gallery: "← Back to gallery",
+    tagline: "Guess where each photo was taken.",
+    button_guess: "Guess",
+    button_next_round: "Next round",
+    button_view_total_results: "View total results",
+    button_back_to_total_results: "Back to total results",
+    summary_title: "Your Total Score",
+    back_to_homepage: "Back to homepage",
+    play_again: "Play again",
+    hud_round: "Round: {current}/{max}",
+    hud_round_review: "Round: {current}/{max} (Review)",
+    hud_total: "Total: {score}",
+    summary_avg_distance: "Average distance: {distance}",
+    round_review_button: "Round {round}: {score} pts",
+    result_points_distance: "Points: {score}/5000 · Distance: {distance}",
+    status_place_guess: "Click on the map to place your guess.",
+    status_guess_placed: "Guess placed. Press Guess to score this round.",
+    status_you_were_away: "You were {distance} away. Score: {score}/5000.",
+    status_game_finished: "Game finished. Review any round below.",
+    status_reviewing_round: "Reviewing round {round}.",
+    photo_alt: "Guessr round photo",
+    map_aria: "World map for placing guess",
+    photo_zoom_controls: "Photo zoom controls",
+    zoom_out: "Zoom out",
+    zoom_reset: "Reset zoom",
+    zoom_in: "Zoom in",
+    data_error_missing_data: "Missing photo location data. Check photo-locations.js.",
+    data_error_no_photos: "Add coordinates in photo-locations.js (numbers only, no quotes) to start playing.",
+    data_error_init_fail: "Could not initialize the map. Check internet access and photo-locations.js."
+  },
+  no: {
+    page_title: "SandraOgBenjaminGuessr",
+    back_to_gallery: "← Tilbake til galleri",
+    tagline: "Gjett hvor hvert bilde ble tatt.",
+    button_guess: "Gjett",
+    button_next_round: "Neste runde",
+    button_view_total_results: "Se totalresultat",
+    button_back_to_total_results: "Tilbake til totalresultat",
+    summary_title: "Din totalscore",
+    back_to_homepage: "Tilbake til forsiden",
+    play_again: "Spill igjen",
+    hud_round: "Runde: {current}/{max}",
+    hud_round_review: "Runde: {current}/{max} (Gjennomgang)",
+    hud_total: "Totalt: {score}",
+    summary_avg_distance: "Gjennomsnittlig avstand: {distance}",
+    round_review_button: "Runde {round}: {score} poeng",
+    result_points_distance: "Poeng: {score}/5000 · Avstand: {distance}",
+    status_place_guess: "Klikk på kartet for å plassere gjetningen din.",
+    status_guess_placed: "Gjetning plassert. Trykk Gjett for å få poeng for runden.",
+    status_you_were_away: "Du var {distance} unna. Poeng: {score}/5000.",
+    status_game_finished: "Spillet er ferdig. Se gjennom rundene under.",
+    status_reviewing_round: "Viser runde {round}.",
+    photo_alt: "Guessr-rundebilde",
+    map_aria: "Verdenskart for å plassere gjetning",
+    photo_zoom_controls: "Kontroller for bildezoom",
+    zoom_out: "Zoom ut",
+    zoom_reset: "Tilbakestill zoom",
+    zoom_in: "Zoom inn",
+    data_error_missing_data: "Mangler bildelokasjoner. Sjekk photo-locations.js.",
+    data_error_no_photos: "Legg til koordinater i photo-locations.js (kun tall, uten anførselstegn) for å starte.",
+    data_error_init_fail: "Kunne ikke initialisere kartet. Sjekk internettilgang og photo-locations.js."
+  }
+};
 
 const roundPhoto = document.querySelector("#roundPhoto");
 const photoPanel = document.querySelector(".guessr-photo-panel");
@@ -50,8 +121,120 @@ let photoDragStartY = 0;
 let photoPanStartX = 0;
 let photoPanStartY = 0;
 let photoDragMoved = false;
+let currentLang = "en";
 
 const isNumber = (value) => typeof value === "number" && Number.isFinite(value);
+
+const getStoredLanguage = () => {
+  try {
+    const value = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    return value === "en" || value === "no" ? value : null;
+  } catch (_error) {
+    return null;
+  }
+};
+
+const setStoredLanguage = (lang) => {
+  try {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+  } catch (_error) {
+    // Ignore storage errors.
+  }
+};
+
+const interpolate = (template, values = {}) =>
+  template.replace(/\{(\w+)\}/g, (_match, key) =>
+    values[key] !== undefined ? String(values[key]) : ""
+  );
+
+const t = (key, values = {}) => {
+  const fallback = translations.en[key] || key;
+  const message = (translations[currentLang] && translations[currentLang][key]) || fallback;
+  return interpolate(message, values);
+};
+
+const getNextButtonLabel = () => {
+  if (mode === "review") return t("button_back_to_total_results");
+  return currentRoundNumber < MAX_ROUNDS ? t("button_next_round") : t("button_view_total_results");
+};
+
+const applyStaticTranslations = () => {
+  const dict = translations[currentLang] || translations.en;
+  translatable.forEach((element) => {
+    const key = element.getAttribute("data-i18n");
+    if (key && dict[key]) {
+      element.textContent = dict[key];
+    }
+  });
+  document.documentElement.setAttribute("lang", currentLang === "no" ? "no" : "en");
+  switchButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.lang === currentLang));
+  if (mapDock) mapDock.setAttribute("aria-label", t("map_aria"));
+  if (photoControls) photoControls.setAttribute("aria-label", t("photo_zoom_controls"));
+  if (photoZoomOutButton) photoZoomOutButton.setAttribute("aria-label", t("zoom_out"));
+  if (photoZoomResetButton) photoZoomResetButton.setAttribute("aria-label", t("zoom_reset"));
+  if (photoZoomInButton) photoZoomInButton.setAttribute("aria-label", t("zoom_in"));
+};
+
+const refreshLocalizedUi = () => {
+  applyStaticTranslations();
+  if (roundPhoto) {
+    roundPhoto.alt = (currentPhoto && currentPhoto.label) || t("photo_alt");
+  }
+  updateHud();
+
+  if (mode === "review") {
+    const result = sessionResults[currentRoundNumber - 1];
+    if (resultSummary && result) {
+      resultSummary.textContent = t("result_points_distance", {
+        score: result.score,
+        distance: formatDistance(result.distanceKm)
+      });
+    }
+    nextButton.textContent = t("button_back_to_total_results");
+  } else if (mode === "result") {
+    const result = sessionResults[currentRoundNumber - 1];
+    if (resultSummary && result) {
+      resultSummary.textContent = t("result_points_distance", {
+        score: result.score,
+        distance: formatDistance(result.distanceKm)
+      });
+    }
+    nextButton.textContent = getNextButtonLabel();
+  } else if (mode === "playing") {
+    nextButton.textContent = getNextButtonLabel();
+    if (!guessButton.disabled && isNumber(guessLat) && isNumber(guessLng)) {
+      statusText.textContent = t("status_guess_placed");
+    } else {
+      statusText.textContent = t("status_place_guess");
+    }
+  } else if (mode === "summary") {
+    nextButton.textContent = t("button_view_total_results");
+    statusText.textContent = t("status_game_finished");
+  }
+
+  if (finalTotalScore && mode === "summary") {
+    finalTotalScore.textContent = `${accumulatedScore} / ${MAX_ROUNDS * SCORE_MAX}`;
+  }
+  if (finalSummaryLine && mode === "summary") {
+    const totalDistance = sessionResults.reduce((sum, result) => sum + result.distanceKm, 0);
+    const averageDistance = sessionResults.length ? Math.round(totalDistance / sessionResults.length) : 0;
+    finalSummaryLine.textContent = t("summary_avg_distance", { distance: formatDistance(averageDistance) });
+  }
+  if (roundReviewButtons && mode === "summary") {
+    Array.from(roundReviewButtons.children).forEach((button, index) => {
+      const result = sessionResults[index];
+      if (!result) return;
+      button.textContent = t("round_review_button", { round: result.round, score: result.score });
+    });
+  }
+};
+
+const setLanguage = (lang) => {
+  if (lang !== "en" && lang !== "no") return;
+  currentLang = lang;
+  setStoredLanguage(lang);
+  refreshLocalizedUi();
+};
 
 const haversineDistanceKm = (lat1, lng1, lat2, lng2) => {
   const toRad = (deg) => (deg * Math.PI) / 180;
@@ -213,8 +396,12 @@ const setDataError = (message) => {
 };
 
 const updateHud = () => {
-  roundCount.textContent = `Round: ${currentRoundNumber}/${MAX_ROUNDS}`;
-  totalScore.textContent = `Total: ${accumulatedScore}`;
+  if (mode === "review") {
+    roundCount.textContent = t("hud_round_review", { current: currentRoundNumber, max: MAX_ROUNDS });
+  } else {
+    roundCount.textContent = t("hud_round", { current: currentRoundNumber, max: MAX_ROUNDS });
+  }
+  totalScore.textContent = t("hud_total", { score: accumulatedScore });
 };
 
 const clearStageModes = () => {
@@ -250,7 +437,7 @@ const showTotalResults = () => {
   }
 
   if (finalSummaryLine) {
-    finalSummaryLine.textContent = `Average distance: ${formatDistance(averageDistance)}`;
+    finalSummaryLine.textContent = t("summary_avg_distance", { distance: formatDistance(averageDistance) });
   }
 
   if (roundReviewButtons) {
@@ -259,13 +446,13 @@ const showTotalResults = () => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "guessr-round-review-btn";
-      button.textContent = `Round ${result.round}: ${result.score} pts`;
+      button.textContent = t("round_review_button", { round: result.round, score: result.score });
       button.addEventListener("click", () => showRoundReview(index));
       roundReviewButtons.appendChild(button);
     });
   }
 
-  statusText.textContent = "Game finished. Review any round below.";
+  statusText.textContent = t("status_game_finished");
   guessButton.disabled = true;
   nextButton.disabled = true;
 };
@@ -289,7 +476,7 @@ const showRoundReview = (index) => {
 
   currentPhoto = result.photo;
   roundPhoto.src = result.photo.src;
-  roundPhoto.alt = result.photo.label || "Guessr round photo";
+  roundPhoto.alt = result.photo.label || t("photo_alt");
   resetPhotoZoom();
 
   clearRoundMarkers();
@@ -304,16 +491,19 @@ const showRoundReview = (index) => {
   );
 
   if (resultSummary) {
-    resultSummary.textContent = `Points: ${result.score}/5000 · Distance: ${formatDistance(result.distanceKm)}`;
+    resultSummary.textContent = t("result_points_distance", {
+      score: result.score,
+      distance: formatDistance(result.distanceKm)
+    });
   }
 
-  roundCount.textContent = `Round: ${result.round}/${MAX_ROUNDS} (Review)`;
-  totalScore.textContent = `Total: ${accumulatedScore}`;
-  statusText.textContent = `Reviewing round ${result.round}.`;
+  currentRoundNumber = result.round;
+  updateHud();
+  statusText.textContent = t("status_reviewing_round", { round: result.round });
 
   guessButton.disabled = true;
   nextButton.disabled = false;
-  nextButton.textContent = "Back to total results";
+  nextButton.textContent = t("button_back_to_total_results");
 
   setTimeout(refreshMapSize, 20);
   setTimeout(refreshMapSize, 260);
@@ -330,7 +520,7 @@ const startRound = () => {
   clearRoundMarkers();
   currentPhoto = pickRandomPhoto();
   roundPhoto.src = currentPhoto.src;
-  roundPhoto.alt = currentPhoto.label || "Guessr round photo";
+  roundPhoto.alt = currentPhoto.label || t("photo_alt");
   if (photoPanel) {
     photoPanel.classList.remove("is-expanded-photo");
   }
@@ -343,10 +533,10 @@ const startRound = () => {
     resultSummary.textContent = "";
   }
 
-  statusText.textContent = "Click on the map to place your guess.";
+  statusText.textContent = t("status_place_guess");
   guessButton.disabled = true;
   nextButton.disabled = true;
-  nextButton.textContent = currentRoundNumber < MAX_ROUNDS ? "Next round" : "View total results";
+  nextButton.textContent = getNextButtonLabel();
   updateHud();
 
   map.setView([20, 0], 2);
@@ -365,7 +555,7 @@ const placeGuess = (lat, lng) => {
     guessMapMarker = L.marker([lat, lng], { icon: markerIcon("guess-pin") }).addTo(map);
   }
 
-  statusText.textContent = "Guess placed. Press Guess to score this round.";
+  statusText.textContent = t("status_guess_placed");
   guessButton.disabled = false;
 };
 
@@ -404,18 +594,24 @@ const submitGuess = () => {
   sessionResults[currentRoundNumber - 1] = roundResult;
 
   if (resultSummary) {
-    resultSummary.textContent = `Points: ${roundScore}/5000 · Distance: ${formatDistance(distanceKm)}`;
+    resultSummary.textContent = t("result_points_distance", {
+      score: roundScore,
+      distance: formatDistance(distanceKm)
+    });
   }
-  statusText.textContent = `You were ${formatDistance(distanceKm)} away. Score: ${roundScore}/5000.`;
+  statusText.textContent = t("status_you_were_away", {
+    distance: formatDistance(distanceKm),
+    score: roundScore
+  });
 
-  totalScore.textContent = `Total: ${accumulatedScore}`;
+  updateHud();
   guessButton.disabled = true;
 
   if (currentRoundNumber < MAX_ROUNDS) {
-    nextButton.textContent = "Next round";
+    nextButton.textContent = t("button_next_round");
     nextButton.disabled = false;
   } else {
-    nextButton.textContent = "View total results";
+    nextButton.textContent = t("button_view_total_results");
     nextButton.disabled = true;
     setTimeout(showTotalResults, 900);
   }
@@ -498,7 +694,7 @@ const init = () => {
   try {
     const data = window.PHOTO_LOCATIONS;
     if (!data || typeof data !== "object") {
-      setDataError("Missing photo location data. Check photo-locations.js.");
+      setDataError(t("data_error_missing_data"));
       return;
     }
 
@@ -513,17 +709,21 @@ const init = () => {
     );
 
     if (!playablePhotos.length) {
-      setDataError("Add coordinates in photo-locations.js (numbers only, no quotes) to start playing.");
+      setDataError(t("data_error_no_photos"));
       return;
     }
 
     initMap();
     restartGame();
   } catch (error) {
-    setDataError("Could not initialize the map. Check internet access and photo-locations.js.");
+    setDataError(t("data_error_init_fail"));
     console.error(error);
   }
 };
+
+switchButtons.forEach((button) => {
+  button.addEventListener("click", () => setLanguage(button.dataset.lang));
+});
 
 guessButton.addEventListener("click", submitGuess);
 nextButton.addEventListener("click", handleNextButton);
@@ -607,6 +807,10 @@ if (photoZoomInButton) {
 }
 
 window.addEventListener("resize", () => setPhotoPan(photoPanX, photoPanY));
+
+const browserLang = (navigator.language || "").toLowerCase();
+const isNorwegian = browserLang.startsWith("no") || browserLang.startsWith("nb") || browserLang.startsWith("nn");
+setLanguage(getStoredLanguage() || (isNorwegian ? "no" : "en"));
 
 resetPhotoZoom();
 
