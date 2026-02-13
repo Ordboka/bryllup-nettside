@@ -406,8 +406,6 @@ const resetPhotoZoom = () => {
 const syncResultPhotoPanelOrientation = () => {
   if (!photoPanel || !roundPhoto) return;
   if (!roundPhoto.naturalWidth || !roundPhoto.naturalHeight) return;
-  const isPortrait = roundPhoto.naturalHeight > roundPhoto.naturalWidth;
-  photoPanel.classList.toggle("is-portrait-photo", isPortrait);
   setPhotoPan(photoPanX, photoPanY);
 };
 
@@ -829,7 +827,9 @@ if (photoZoomInButton) {
   photoZoomInButton.addEventListener("click", () => setPhotoZoom(photoZoom + PHOTO_ZOOM_STEP));
 }
 
-window.addEventListener("resize", () => setPhotoPan(photoPanX, photoPanY));
+window.addEventListener("resize", () => {
+  setPhotoPan(photoPanX, photoPanY);
+});
 
 const browserLang = (navigator.language || "").toLowerCase();
 const isNorwegian = browserLang.startsWith("no") || browserLang.startsWith("nb") || browserLang.startsWith("nn");

@@ -106,8 +106,10 @@ body {
 .guessr-photo-panel {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem;
   --photo-zoom: 1;
   --photo-pan-x: 0px;
   --photo-pan-y: 0px;
@@ -118,8 +120,10 @@ body {
 }
 
 .guessr-photo-panel img {
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   object-position: center;
   transform: translate(var(--photo-pan-x), var(--photo-pan-y)) scale(var(--photo-zoom));
@@ -183,9 +187,9 @@ body {
 
 .guessr-stage.is-result .guessr-photo-panel {
   inset: auto 1rem 1rem auto;
-  width: 240px;
-  aspect-ratio: 16 / 10;
+  width: auto;
   height: auto;
+  aspect-ratio: auto;
   z-index: 760;
   border-radius: 14px;
   overflow: hidden;
@@ -196,46 +200,38 @@ body {
 }
 
 .guessr-stage.is-result .guessr-photo-panel.is-expanded-photo {
-  width: min(720px, calc(100vw - 2rem));
-  aspect-ratio: 16 / 10;
+  width: auto;
   height: auto;
+  aspect-ratio: auto;
   box-shadow: 0 20px 42px rgba(0, 0, 0, 0.52);
   cursor: zoom-out;
 }
 
-.guessr-stage.is-result .guessr-photo-panel.is-portrait-photo {
-  width: 180px;
-  aspect-ratio: 3 / 4;
-}
-
-.guessr-stage.is-result .guessr-photo-panel.is-portrait-photo.is-expanded-photo {
-  width: min(420px, calc(100vw - 2rem));
-  aspect-ratio: 3 / 4;
-}
-
 .guessr-stage.is-result .guessr-photo-panel img {
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  max-height: none;
+  width: auto;
+  height: auto;
+  max-width: min(36vw, 260px);
+  max-height: min(38vh, 260px);
   object-fit: contain !important;
   object-position: center center !important;
   background: #1b211f;
 }
 
+.guessr-stage.is-result .guessr-photo-panel.is-expanded-photo img {
+  max-width: min(82vw, 820px);
+  max-height: min(82vh, 620px);
+}
+
 @media (hover: hover) and (pointer: fine) {
   .guessr-stage.is-result .guessr-photo-panel:not(.is-expanded-photo):not(.is-photo-zoomed):hover,
   .guessr-stage.is-result .guessr-photo-panel:not(.is-expanded-photo):not(.is-photo-zoomed):focus-within {
-    width: min(720px, calc(100vw - 2rem));
-    aspect-ratio: 16 / 10;
-    height: auto;
     box-shadow: 0 20px 42px rgba(0, 0, 0, 0.52);
   }
 
-  .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo:not(.is-expanded-photo):not(.is-photo-zoomed):hover,
-  .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo:not(.is-expanded-photo):not(.is-photo-zoomed):focus-within {
-    width: min(420px, calc(100vw - 2rem));
-    aspect-ratio: 3 / 4;
+  .guessr-stage.is-result .guessr-photo-panel:not(.is-expanded-photo):not(.is-photo-zoomed):hover img,
+  .guessr-stage.is-result .guessr-photo-panel:not(.is-expanded-photo):not(.is-photo-zoomed):focus-within img {
+    max-width: min(82vw, 820px);
+    max-height: min(82vh, 620px);
   }
 }
 
@@ -490,23 +486,18 @@ body {
   .guessr-stage.is-result .guessr-photo-panel {
     right: 0.7rem;
     bottom: 0.7rem;
-    width: 180px;
-    aspect-ratio: 16 / 10;
+    width: auto;
+    height: auto;
   }
 
-  .guessr-stage.is-result .guessr-photo-panel.is-expanded-photo {
-    width: min(560px, calc(100vw - 1.4rem));
-    aspect-ratio: 16 / 10;
+  .guessr-stage.is-result .guessr-photo-panel img {
+    max-width: min(46vw, 210px);
+    max-height: min(30vh, 190px);
   }
 
-  .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo {
-    width: 140px;
-    aspect-ratio: 3 / 4;
-  }
-
-  .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo.is-expanded-photo {
-    width: min(340px, calc(100vw - 1.4rem));
-    aspect-ratio: 3 / 4;
+  .guessr-stage.is-result .guessr-photo-panel.is-expanded-photo img {
+    max-width: min(90vw, 620px);
+    max-height: min(76vh, 540px);
   }
 
   .guessr-top-hud {
@@ -599,22 +590,17 @@ body {
   }
 
   .guessr-stage.is-result .guessr-photo-panel {
-    width: 150px;
-    aspect-ratio: 16 / 10;
+    width: auto;
+    height: auto;
   }
 
-  .guessr-stage.is-result .guessr-photo-panel.is-expanded-photo {
-    width: min(520px, calc(100vw - 1.4rem));
-    aspect-ratio: 16 / 10;
+  .guessr-stage.is-result .guessr-photo-panel img {
+    max-width: min(54vw, 180px);
+    max-height: min(26vh, 155px);
   }
 
-  .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo {
-    width: 118px;
-    aspect-ratio: 3 / 4;
-  }
-
-  .guessr-stage.is-result .guessr-photo-panel.is-portrait-photo.is-expanded-photo {
-    width: min(320px, calc(100vw - 1.4rem));
-    aspect-ratio: 3 / 4;
+  .guessr-stage.is-result .guessr-photo-panel.is-expanded-photo img {
+    max-width: min(94vw, 540px);
+    max-height: min(70vh, 500px);
   }
 }
