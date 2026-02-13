@@ -353,6 +353,12 @@ body {
   color: #eadfce;
 }
 
+.guessr-copy-note {
+  margin: 0;
+  color: #f2e7d8;
+  line-height: 1.35;
+}
+
 .guessr-round-list {
   display: flex;
   flex-wrap: wrap;

@@ -17,6 +17,8 @@ const translations = {
     button_view_total_results: "View total results",
     button_back_to_total_results: "Back to total results",
     summary_title: "Your Total Score",
+    summary_share_prompt: "We would love to know how you did. Copy your results and share them with us.",
+    button_copy_results: "Copy results",
     back_to_homepage: "Back to homepage",
     play_again: "Play again",
     hud_round: "Round: {current}/{max}",
@@ -30,6 +32,8 @@ const translations = {
     status_you_were_away: "You were {distance} away. Score: {score}/5000.",
     status_game_finished: "Game finished. Review any round below.",
     status_reviewing_round: "Reviewing round {round}.",
+    status_results_copied: "Results copied to clipboard.",
+    status_results_copy_failed: "Could not copy results. Please try again.",
     photo_alt: "Guessr round photo",
     map_aria: "World map for placing guess",
     photo_zoom_controls: "Photo zoom controls",
@@ -38,6 +42,10 @@ const translations = {
     zoom_in: "Zoom in",
     tooltip_guess: "Your guess",
     tooltip_answer: "Answer",
+    summary_copy_title: "SandraOgBenjaminGuessr Results",
+    summary_copy_round_label: "Round {round}",
+    summary_copy_total: "Total",
+    summary_copy_avg_distance: "Average distance",
     data_error_missing_data: "Missing photo location data. Check photo-locations.js.",
     data_error_no_photos: "Add coordinates in photo-locations.js (numbers only, no quotes) to start playing.",
     data_error_init_fail: "Could not initialize the map. Check internet access and photo-locations.js."
@@ -51,6 +59,8 @@ const translations = {
     button_view_total_results: "Se totalresultat",
     button_back_to_total_results: "Tilbake til totalresultat",
     summary_title: "Din totalscore",
+    summary_share_prompt: "Vi vil gjerne vite hvordan det gikk. Kopier resultatet ditt og del det med oss.",
+    button_copy_results: "Kopier resultat",
     back_to_homepage: "Tilbake til forsiden",
     play_again: "Spill igjen",
     hud_round: "Runde: {current}/{max}",
@@ -64,6 +74,8 @@ const translations = {
     status_you_were_away: "Du var {distance} unna. Poeng: {score}/5000.",
     status_game_finished: "Spillet er ferdig. Se gjennom rundene under.",
     status_reviewing_round: "Viser runde {round}.",
+    status_results_copied: "Resultatene er kopiert til utklippstavlen.",
+    status_results_copy_failed: "Kunne ikke kopiere resultatene. Prøv igjen.",
     photo_alt: "Guessr-rundebilde",
     map_aria: "Verdenskart for å plassere gjetning",
     photo_zoom_controls: "Kontroller for bildezoom",
@@ -72,6 +84,10 @@ const translations = {
     zoom_in: "Zoom inn",
     tooltip_guess: "Ditt gjett",
     tooltip_answer: "Svar",
+    summary_copy_title: "SandraOgBenjaminGuessr Resultat",
+    summary_copy_round_label: "Runde {round}",
+    summary_copy_total: "Totalt",
+    summary_copy_avg_distance: "Gjennomsnittlig avstand",
     data_error_missing_data: "Mangler bildelokasjoner. Sjekk photo-locations.js.",
     data_error_no_photos: "Legg til koordinater i photo-locations.js (kun tall, uten anførselstegn) for å starte.",
     data_error_init_fail: "Kunne ikke initialisere kartet. Sjekk internettilgang og photo-locations.js."
@@ -94,6 +110,7 @@ const finalTotalScore = document.querySelector("#finalTotalScore");
 const finalSummaryLine = document.querySelector("#finalSummaryLine");
 const roundReviewButtons = document.querySelector("#roundReviewButtons");
 const playAgainButton = document.querySelector("#playAgainButton");
+const copyResultsButton = document.querySelector("#copyResultsButton");
 const photoZoomOutButton = document.querySelector("#photoZoomOutButton");
 const photoZoomResetButton = document.querySelector("#photoZoomResetButton");
 const photoZoomInButton = document.querySelector("#photoZoomInButton");
@@ -270,6 +287,71 @@ const formatDistance = (distanceKm) => {
     return `${Math.round(distanceKm * 1000)} m`;
   }
   return `${Math.round(distanceKm)} km`;
+};
+
+const buildResultsCopyText = () => {
+  const sortedResults = sessionResults
+    .filter(Boolean)
+    .slice()
+    .sort((a, b) => a.round - b.round);
+  if (!sortedResults.length) return "";
+
+  const roundEmoji = {
+    1: "1️⃣",
+    2: "2️⃣",
+    3: "3️⃣",
+    4: "4️⃣",
+    5: "5️⃣"
+  };
+  const totalDistance = sortedResults.reduce((sum, result) => sum + result.distanceKm, 0);
+  const averageDistance = Math.round(totalDistance / sortedResults.length);
+  const totalLabel = t("summary_copy_total");
+  const avgLabel = t("summary_copy_avg_distance");
+  const maxTotalScore = MAX_ROUNDS * SCORE_MAX;
+
+  const lines = [
+    `📋 ${t("summary_copy_title")}`,
+    "",
+    ...sortedResults.map((result) =>
+      `${roundEmoji[result.round] || "📍"} ${result.score}/${SCORE_MAX} • ${formatDistance(result.distanceKm)}`
+    ),
+    "",
+    `🏆 ${totalLabel}: ${accumulatedScore}/${maxTotalScore}`,
+    `📏 ${avgLabel}: ${formatDistance(averageDistance)}`
+  ];
+
+  return lines.join("\n");
+};
+
+const copyTextToClipboard = async (text) => {
+  if (!text) return false;
+
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (_error) {
+      // Fallback below.
+    }
+  }
+
+  const helper = document.createElement("textarea");
+  helper.value = text;
+  helper.setAttribute("readonly", "");
+  helper.style.position = "fixed";
+  helper.style.left = "-9999px";
+  document.body.appendChild(helper);
+  helper.select();
+  helper.setSelectionRange(0, helper.value.length);
+
+  let copied = false;
+  try {
+    copied = document.execCommand("copy");
+  } catch (_error) {
+    copied = false;
+  }
+  helper.remove();
+  return copied;
 };
 
 const normalizeLng = (lng) => {
@@ -947,6 +1029,13 @@ switchButtons.forEach((button) => {
 guessButton.addEventListener("click", submitGuess);
 nextButton.addEventListener("click", handleNextButton);
 playAgainButton.addEventListener("click", restartGame);
+if (copyResultsButton) {
+  copyResultsButton.addEventListener("click", async () => {
+    const text = buildResultsCopyText();
+    const copied = await copyTextToClipboard(text);
+    statusText.textContent = copied ? t("status_results_copied") : t("status_results_copy_failed");
+  });
+}
 window.addEventListener("keydown", (event) => {
   if (event.code !== "Space") return;
   if (event.repeat) return;
