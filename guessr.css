@@ -524,6 +524,11 @@ body {
   background: var(--clay);
 }
 
+.guessr-btn--secondary.is-copied {
+  background: #e8d9c2;
+  color: #2f2b28;
+}
+
 .guessr-btn--ghost {
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.28);

@@ -19,6 +19,7 @@ const translations = {
     summary_title: "Your Total Score",
     summary_share_prompt: "We would love to know how you did. Copy your results and share them with us.",
     button_copy_results: "Copy results",
+    button_results_copied: "✅ Results copied",
     back_to_homepage: "Back to homepage",
     play_again: "Play again",
     hud_round: "Round: {current}/{max}",
@@ -61,6 +62,7 @@ const translations = {
     summary_title: "Din totalscore",
     summary_share_prompt: "Vi vil gjerne vite hvordan det gikk. Kopier resultatet ditt og del det med oss.",
     button_copy_results: "Kopier resultat",
+    button_results_copied: "✅ Resultat kopiert",
     back_to_homepage: "Tilbake til forsiden",
     play_again: "Spill igjen",
     hud_round: "Runde: {current}/{max}",
@@ -149,6 +151,7 @@ let photoPanStartY = 0;
 let photoDragMoved = false;
 let currentLang = "en";
 let mobileLayoutMediaQuery = null;
+let hasCopiedResults = false;
 
 const isNumber = (value) => typeof value === "number" && Number.isFinite(value);
 
@@ -200,6 +203,14 @@ const applyStaticTranslations = () => {
   if (photoZoomOutButton) photoZoomOutButton.setAttribute("aria-label", t("zoom_out"));
   if (photoZoomResetButton) photoZoomResetButton.setAttribute("aria-label", t("zoom_reset"));
   if (photoZoomInButton) photoZoomInButton.setAttribute("aria-label", t("zoom_in"));
+};
+
+const updateCopyResultsButtonState = () => {
+  if (!copyResultsButton) return;
+  copyResultsButton.classList.toggle("is-copied", hasCopiedResults);
+  copyResultsButton.textContent = hasCopiedResults
+    ? t("button_results_copied")
+    : t("button_copy_results");
 };
 
 const refreshLocalizedUi = () => {
@@ -254,6 +265,7 @@ const refreshLocalizedUi = () => {
       button.textContent = t("round_review_button", { round: result.round, score: result.score });
     });
   }
+  updateCopyResultsButtonState();
   updateActionButtons();
 };
 
@@ -928,6 +940,7 @@ const restartGame = () => {
   currentRoundNumber = 1;
   accumulatedScore = 0;
   sessionResults = [];
+  hasCopiedResults = false;
   remainingPhotos = [...playablePhotos];
   startRound();
 };
@@ -1033,6 +1046,8 @@ if (copyResultsButton) {
   copyResultsButton.addEventListener("click", async () => {
     const text = buildResultsCopyText();
     const copied = await copyTextToClipboard(text);
+    hasCopiedResults = copied;
+    updateCopyResultsButtonState();
     statusText.textContent = copied ? t("status_results_copied") : t("status_results_copy_failed");
   });
 }
