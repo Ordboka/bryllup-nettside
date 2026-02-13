@@ -101,6 +101,8 @@ const PHOTO_ZOOM_STEP = 0.25;
 let map = null;
 let guessMapMarker = null;
 let answerMapMarker = null;
+let answerRevealLine = null;
+let answerRevealAnimationFrame = null;
 
 let mode = "playing";
 let currentRoundNumber = 1;
@@ -296,6 +298,16 @@ const refreshMapSize = () => {
 };
 
 const clearRoundMarkers = () => {
+  if (answerRevealAnimationFrame) {
+    window.cancelAnimationFrame(answerRevealAnimationFrame);
+    answerRevealAnimationFrame = null;
+  }
+
+  if (answerRevealLine) {
+    map.removeLayer(answerRevealLine);
+    answerRevealLine = null;
+  }
+
   if (guessMapMarker) {
     map.removeLayer(guessMapMarker);
     guessMapMarker = null;
@@ -305,6 +317,54 @@ const clearRoundMarkers = () => {
     map.removeLayer(answerMapMarker);
     answerMapMarker = null;
   }
+};
+
+const drawAnswerRevealLine = (start, end, options = {}) => {
+  if (!map) return;
+  const { animate = true, durationMs = 650, onComplete = null } = options;
+
+  if (answerRevealAnimationFrame) {
+    window.cancelAnimationFrame(answerRevealAnimationFrame);
+    answerRevealAnimationFrame = null;
+  }
+  if (answerRevealLine) {
+    map.removeLayer(answerRevealLine);
+    answerRevealLine = null;
+  }
+
+  answerRevealLine = L.polyline([start, end], {
+    color: "#d9a441",
+    weight: 4,
+    opacity: 0.98,
+    dashArray: "4 8",
+    lineCap: "round"
+  }).addTo(map);
+  answerRevealLine.bringToBack();
+
+  if (!animate) {
+    if (typeof onComplete === "function") onComplete();
+    return;
+  }
+
+  answerRevealLine.setLatLngs([start, start]);
+  const startTime = performance.now();
+  const tick = (now) => {
+    const elapsed = now - startTime;
+    const progress = Math.min(1, elapsed / durationMs);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const lat = start[0] + (end[0] - start[0]) * eased;
+    const lng = start[1] + (end[1] - start[1]) * eased;
+    answerRevealLine.setLatLngs([start, [lat, lng]]);
+
+    if (progress < 1) {
+      answerRevealAnimationFrame = window.requestAnimationFrame(tick);
+    } else {
+      answerRevealAnimationFrame = null;
+      if (typeof onComplete === "function") onComplete();
+    }
+  };
+
+  answerRevealAnimationFrame = window.requestAnimationFrame(tick);
 };
 
 const pickRandomPhoto = () => {
@@ -503,6 +563,7 @@ const showRoundReview = (index) => {
   const displayPoints = getDisplayPoints(result.guessLat, result.guessLng, result.answerLat, result.answerLng);
   guessMapMarker = L.marker(displayPoints.guess, { icon: markerIcon("guess-pin") }).addTo(map);
   answerMapMarker = L.marker(displayPoints.answer, { icon: markerIcon("answer-pin") }).addTo(map);
+  drawAnswerRevealLine(displayPoints.guess, displayPoints.answer, { animate: false });
   map.fitBounds(
     [displayPoints.guess, displayPoints.answer],
     { padding: [35, 35], maxZoom: 19 }
@@ -596,7 +657,17 @@ const submitGuess = () => {
   } else {
     guessMapMarker = L.marker(displayPoints.guess, { icon: markerIcon("guess-pin") }).addTo(map);
   }
-  answerMapMarker = L.marker(displayPoints.answer, { icon: markerIcon("answer-pin") }).addTo(map);
+  answerMapMarker = L.marker(displayPoints.answer, {
+    icon: markerIcon("answer-pin"),
+    opacity: 0
+  }).addTo(map);
+  drawAnswerRevealLine(displayPoints.guess, displayPoints.answer, {
+    animate: true,
+    durationMs: 700,
+    onComplete: () => {
+      if (answerMapMarker) answerMapMarker.setOpacity(1);
+    }
+  });
   map.fitBounds(
     [displayPoints.guess, displayPoints.answer],
     { padding: [35, 35], maxZoom: 19 }
