@@ -724,6 +724,13 @@ const handleNextButton = () => {
   }
 };
 
+const isTypingTarget = (target) => {
+  if (!(target instanceof HTMLElement)) return false;
+  const tag = target.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "BUTTON") return true;
+  return target.isContentEditable;
+};
+
 const restartGame = () => {
   currentRoundNumber = 1;
   accumulatedScore = 0;
@@ -820,6 +827,15 @@ switchButtons.forEach((button) => {
 guessButton.addEventListener("click", submitGuess);
 nextButton.addEventListener("click", handleNextButton);
 playAgainButton.addEventListener("click", restartGame);
+window.addEventListener("keydown", (event) => {
+  if (event.code !== "Space") return;
+  if (event.repeat) return;
+  if (isTypingTarget(event.target)) return;
+  if (mode !== "playing") return;
+  if (!isNumber(guessLat) || !isNumber(guessLng) || guessButton.disabled) return;
+  event.preventDefault();
+  submitGuess();
+});
 roundPhoto.addEventListener("load", syncResultPhotoPanelOrientation);
 roundPhoto.addEventListener("wheel", (event) => {
   event.preventDefault();
