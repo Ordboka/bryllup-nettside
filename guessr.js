@@ -70,6 +70,14 @@ const geoguessrScore = (distanceKm) => {
   return Math.max(0, Math.min(SCORE_MAX, Math.round(raw)));
 };
 
+const formatDistance = (distanceKm) => {
+  if (!isNumber(distanceKm)) return "0 km";
+  if (distanceKm < 1) {
+    return `${Math.round(distanceKm * 1000)} m`;
+  }
+  return `${Math.round(distanceKm)} km`;
+};
+
 const markerIcon = (className) =>
   L.divIcon({
     className,
@@ -135,9 +143,36 @@ const resetPhotoPan = () => {
   setPhotoPan(0, 0);
 };
 
-const setPhotoZoom = (nextZoom) => {
+const getPhotoAnchorOffset = (clientX, clientY) => {
+  if (!photoPanel || !Number.isFinite(clientX) || !Number.isFinite(clientY)) {
+    return null;
+  }
+  const rect = photoPanel.getBoundingClientRect();
+  if (!rect.width || !rect.height) return null;
+  return {
+    x: clientX - rect.left - rect.width / 2,
+    y: clientY - rect.top - rect.height / 2
+  };
+};
+
+const getAnchoredPan = (nextZoom, anchorOffset) => {
+  if (!anchorOffset || photoZoom <= 0 || nextZoom <= 0) {
+    return { x: photoPanX, y: photoPanY };
+  }
+  const zoomRatio = nextZoom / photoZoom;
+  return {
+    x: (1 - zoomRatio) * anchorOffset.x + zoomRatio * photoPanX,
+    y: (1 - zoomRatio) * anchorOffset.y + zoomRatio * photoPanY
+  };
+};
+
+const setPhotoZoom = (nextZoom, options = {}) => {
   if (!photoPanel || !roundPhoto) return;
-  photoZoom = clamp(nextZoom, PHOTO_ZOOM_MIN, PHOTO_ZOOM_MAX);
+  const { anchorClientX, anchorClientY } = options;
+  const clampedZoom = clamp(nextZoom, PHOTO_ZOOM_MIN, PHOTO_ZOOM_MAX);
+  const anchorOffset = getPhotoAnchorOffset(anchorClientX, anchorClientY);
+  const anchoredPan = getAnchoredPan(clampedZoom, anchorOffset);
+  photoZoom = clampedZoom;
   photoPanel.style.setProperty("--photo-zoom", String(photoZoom));
   photoPanel.classList.toggle("is-photo-zoomed", photoZoom > PHOTO_ZOOM_MIN);
   if (photoZoom > PHOTO_ZOOM_MIN && (mode === "result" || mode === "review")) {
@@ -155,7 +190,7 @@ const setPhotoZoom = (nextZoom) => {
   if (photoZoomInButton) {
     photoZoomInButton.disabled = photoZoom >= PHOTO_ZOOM_MAX;
   }
-  setPhotoPan(photoPanX, photoPanY);
+  setPhotoPan(anchoredPan.x, anchoredPan.y);
 };
 
 const resetPhotoZoom = () => {
@@ -215,7 +250,7 @@ const showTotalResults = () => {
   }
 
   if (finalSummaryLine) {
-    finalSummaryLine.textContent = `Average distance: ${averageDistance} km`;
+    finalSummaryLine.textContent = `Average distance: ${formatDistance(averageDistance)}`;
   }
 
   if (roundReviewButtons) {
@@ -269,7 +304,7 @@ const showRoundReview = (index) => {
   );
 
   if (resultSummary) {
-    resultSummary.textContent = `Points: ${result.score}/5000 · Distance: ${Math.round(result.distanceKm)} km`;
+    resultSummary.textContent = `Points: ${result.score}/5000 · Distance: ${formatDistance(result.distanceKm)}`;
   }
 
   roundCount.textContent = `Round: ${result.round}/${MAX_ROUNDS} (Review)`;
@@ -369,9 +404,9 @@ const submitGuess = () => {
   sessionResults[currentRoundNumber - 1] = roundResult;
 
   if (resultSummary) {
-    resultSummary.textContent = `Points: ${roundScore}/5000 · Distance: ${Math.round(distanceKm)} km`;
+    resultSummary.textContent = `Points: ${roundScore}/5000 · Distance: ${formatDistance(distanceKm)}`;
   }
-  statusText.textContent = `You were ${Math.round(distanceKm)} km away. Score: ${roundScore}/5000.`;
+  statusText.textContent = `You were ${formatDistance(distanceKm)} away. Score: ${roundScore}/5000.`;
 
   totalScore.textContent = `Total: ${accumulatedScore}`;
   guessButton.disabled = true;
@@ -497,12 +532,15 @@ roundPhoto.addEventListener("load", syncResultPhotoPanelOrientation);
 roundPhoto.addEventListener("wheel", (event) => {
   event.preventDefault();
   const direction = event.deltaY < 0 ? 1 : -1;
-  setPhotoZoom(photoZoom + direction * PHOTO_ZOOM_STEP);
+  setPhotoZoom(photoZoom + direction * PHOTO_ZOOM_STEP, {
+    anchorClientX: event.clientX,
+    anchorClientY: event.clientY
+  });
 }, { passive: false });
 
 if (photoPanel) {
   photoPanel.addEventListener("pointerdown", (event) => {
-    if ((mode !== "result" && mode !== "review") || photoZoom <= PHOTO_ZOOM_MIN) return;
+    if (photoZoom <= PHOTO_ZOOM_MIN) return;
     if (event.target instanceof HTMLElement && event.target.closest(".guessr-photo-zoom-btn")) return;
     isPhotoDragging = true;
     photoDragMoved = false;
