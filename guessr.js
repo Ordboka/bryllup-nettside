@@ -4,6 +4,7 @@ const SCORE_SCALE_KM = 1492.7;
 const EARTH_RADIUS_KM = 6371;
 
 const roundPhoto = document.querySelector("#roundPhoto");
+const photoPanel = document.querySelector(".guessr-photo-panel");
 const guessrStage = document.querySelector("#guessrStage");
 const resultSummary = document.querySelector("#resultSummary");
 const roundCount = document.querySelector("#roundCount");
@@ -83,6 +84,13 @@ const pickRandomPhoto = () => {
 
   const index = Math.floor(Math.random() * remainingPhotos.length);
   return remainingPhotos.splice(index, 1)[0];
+};
+
+const syncResultPhotoPanelOrientation = () => {
+  if (!photoPanel || !roundPhoto) return;
+  if (!roundPhoto.naturalWidth || !roundPhoto.naturalHeight) return;
+  const isPortrait = roundPhoto.naturalHeight > roundPhoto.naturalWidth;
+  photoPanel.classList.toggle("is-portrait-photo", isPortrait);
 };
 
 const setDataError = (message) => {
@@ -395,5 +403,6 @@ const init = () => {
 guessButton.addEventListener("click", submitGuess);
 nextButton.addEventListener("click", handleNextButton);
 playAgainButton.addEventListener("click", restartGame);
+roundPhoto.addEventListener("load", syncResultPhotoPanelOrientation);
 
 init();
