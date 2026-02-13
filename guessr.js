@@ -179,7 +179,7 @@ const showRoundReview = (index) => {
       [result.guessLat, result.guessLng],
       [result.answerLat, result.answerLng]
     ],
-    { padding: [35, 35], maxZoom: 6 }
+    { padding: [35, 35], maxZoom: 19 }
   );
 
   if (resultSummary) {
@@ -263,7 +263,7 @@ const submitGuess = () => {
       [guessLat, guessLng],
       [currentPhoto.lat, currentPhoto.lng]
     ],
-    { padding: [35, 35], maxZoom: 6 }
+    { padding: [35, 35], maxZoom: 19 }
   );
 
   const roundResult = {
@@ -352,7 +352,7 @@ const initMap = () => {
   map = L.map(mapSurface, {
     worldCopyJump: true,
     minZoom: 2,
-    maxZoom: 6,
+    maxZoom: 19,
     zoomControl: true
   }).setView([20, 0], 2);
 
