@@ -101,6 +101,7 @@ const photoZoomInButton = document.querySelector("#photoZoomInButton");
 const PHOTO_ZOOM_MIN = 1;
 const PHOTO_ZOOM_MAX = 4;
 const PHOTO_ZOOM_STEP = 0.25;
+const PHOTO_BASE_DRAG_PAN_RATIO = 0.18;
 const MOBILE_LAYOUT_QUERY = "(max-width: 920px)";
 
 let map = null;
@@ -455,6 +456,13 @@ const getPhotoPanBounds = () => {
   const panelHeight = photoPanel.clientHeight;
   if (!panelWidth || !panelHeight) {
     return { maxX: 0, maxY: 0 };
+  }
+
+  if (photoZoom <= PHOTO_ZOOM_MIN) {
+    return {
+      maxX: panelWidth * PHOTO_BASE_DRAG_PAN_RATIO,
+      maxY: panelHeight * PHOTO_BASE_DRAG_PAN_RATIO
+    };
   }
 
   return {
@@ -963,7 +971,6 @@ if (photoPanel) {
     if (mode === "playing") {
       setMobileMapFocus(false);
     }
-    if (photoZoom <= PHOTO_ZOOM_MIN) return;
     if (event.target instanceof HTMLElement && event.target.closest(".guessr-photo-zoom-btn")) return;
     isPhotoDragging = true;
     photoDragMoved = false;
@@ -994,6 +1001,9 @@ if (photoPanel) {
     photoPanel.classList.remove("is-photo-dragging");
     if (photoPanel.hasPointerCapture(event.pointerId)) {
       photoPanel.releasePointerCapture(event.pointerId);
+    }
+    if (photoZoom <= PHOTO_ZOOM_MIN) {
+      resetPhotoPan();
     }
   };
 
