@@ -1,0 +1,669 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+:root {
+  --pine: #314234;
+  --moss: #657958;
+  --stone: #a59b90;
+  --sand: #f0e5d7;
+  --clay: #b56f52;
+  --paper: #faf5ee;
+  --ink: #25211f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(181, 111, 82, 0.16), transparent 46%),
+    radial-gradient(circle at 78% 10%, rgba(101, 121, 88, 0.24), transparent 50%),
+    var(--paper);
+}
+
+.guessr-header {
+  padding: 1.1rem 5vw 0.8rem;
+}
+
+.guessr-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.guessr-back {
+  display: inline-block;
+  color: var(--pine);
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 0.45rem;
+}
+
+.lang-switch {
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.lang-switch__btn {
+  border: 1px solid rgba(37, 33, 31, 0.22);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lang-switch__btn.is-active {
+  background: var(--pine);
+  color: #f7f1ea;
+  border-color: var(--pine);
+}
+
+.guessr-header h1 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 4.2vw, 2.5rem);
+  color: var(--pine);
+}
+
+.guessr-header p {
+  margin: 0.15rem 0 0;
+  color: #5d554f;
+}
+
+.guessr-main {
+  padding: 0.3rem 3vw 2.2rem;
+}
+
+.guessr-stage {
+  position: relative;
+  width: min(1380px, 100%);
+  margin: 0 auto;
+  height: calc(100vh - 142px);
+  min-height: 540px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(37, 33, 31, 0.16);
+  box-shadow: 0 20px 42px rgba(37, 33, 31, 0.2);
+  background: #1c2220;
+}
+
+.guessr-stage.is-summary .guessr-bottom-hud,
+.guessr-stage.is-summary .guessr-top-hud,
+.guessr-stage.is-summary .guessr-result-summary,
+.guessr-stage.is-summary .guessr-map-dock,
+.guessr-stage.is-summary .guessr-photo-panel {
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.guessr-photo-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem;
+  --photo-zoom: 1;
+  --photo-pan-x: 0px;
+  --photo-pan-y: 0px;
+  background:
+    radial-gradient(circle at 14% 12%, rgba(181, 111, 82, 0.22), transparent 34%),
+    radial-gradient(circle at 85% 90%, rgba(101, 121, 88, 0.28), transparent 44%),
+    #202724;
+}
+
+.guessr-confetti-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 980;
+  overflow: hidden;
+}
+
+.guessr-confetti-piece {
+  position: absolute;
+  top: -12px;
+  width: 10px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--confetti-color, #f4efe3);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22);
+  transform: translateX(0) rotate(var(--confetti-rotate, 0deg));
+  animation: guessr-confetti-fall 1.35s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+@keyframes guessr-confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0) rotate(var(--confetti-rotate, 0deg));
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--confetti-drift, 0px), calc(100% + 40px), 0)
+      rotate(calc(var(--confetti-rotate, 0deg) + 260deg));
+  }
+}
+
+.guessr-photo-panel img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transform: translate(var(--photo-pan-x), var(--photo-pan-y)) scale(var(--photo-zoom));
+  transform-origin: center;
+  transition: transform 0.14s ease;
+  display: block;
+}
+
+.guessr-photo-panel.is-photo-zoomed {
+  cursor: grab;
+}
+
+.guessr-photo-panel.is-photo-zoomed img {
+  touch-action: none;
+}
+
+.guessr-photo-panel.is-photo-dragging {
+  cursor: grabbing;
+}
+
+.guessr-photo-panel.is-photo-dragging img {
+  transition: none;
+}
+
+.guessr-photo-controls {
+  position: absolute;
+  right: 0.55rem;
+  top: 0.55rem;
+  z-index: 3;
+  display: none;
+  gap: 0.35rem;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.35rem;
+}
+
+.guessr-stage.is-result .guessr-photo-controls {
+  display: inline-flex;
+}
+
+.guessr-photo-zoom-btn {
+  min-width: 2rem;
+  min-height: 2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff9f0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.guessr-photo-zoom-btn:focus-visible {
+  outline: 2px solid #d8835f;
+  outline-offset: 2px;
+}
+
+.guessr-photo-zoom-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.guessr-stage.is-result .guessr-photo-panel {
+  inset: auto 1rem 1rem auto;
+  width: auto;
+  height: auto;
+  aspect-ratio: auto;
+  z-index: 760;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.42);
+  transition: width 0.22s ease, height 0.22s ease, box-shadow 0.2s ease;
+  cursor: zoom-in;
+}
+
+.guessr-stage.is-result .guessr-photo-panel.is-expanded-photo {
+  width: auto;
+  height: auto;
+  aspect-ratio: auto;
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.52);
+  cursor: zoom-out;
+}
+
+.guessr-stage.is-result .guessr-photo-panel img {
+  width: auto;
+  height: auto;
+  max-width: min(36vw, 260px);
+  max-height: min(38vh, 260px);
+  object-fit: contain !important;
+  object-position: center center !important;
+  background: #1b211f;
+}
+
+.guessr-stage.is-result .guessr-photo-panel.is-expanded-photo img {
+  max-width: min(82vw, 820px);
+  max-height: min(82vh, 620px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .guessr-stage.is-result .guessr-photo-panel:not(.is-expanded-photo):not(.is-photo-zoomed):hover,
+  .guessr-stage.is-result .guessr-photo-panel:not(.is-expanded-photo):not(.is-photo-zoomed):focus-within {
+    box-shadow: 0 20px 42px rgba(0, 0, 0, 0.52);
+  }
+
+  .guessr-stage.is-result .guessr-photo-panel:not(.is-expanded-photo):not(.is-photo-zoomed):hover img,
+  .guessr-stage.is-result .guessr-photo-panel:not(.is-expanded-photo):not(.is-photo-zoomed):focus-within img {
+    max-width: min(82vw, 820px);
+    max-height: min(82vh, 620px);
+  }
+}
+
+.guessr-glass {
+  backdrop-filter: blur(8px);
+  background: rgba(18, 23, 21, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
+}
+
+.guessr-top-hud {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 450;
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  display: flex;
+  gap: 0.95rem;
+  font-weight: 600;
+  color: #f6eee4;
+}
+
+.guessr-result-summary {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  z-index: 530;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  color: #fff7ef;
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.guessr-stage.is-result .guessr-result-summary {
+  opacity: 1;
+}
+
+.guessr-bottom-hud {
+  position: absolute;
+  left: 1rem;
+  right: 19rem;
+  bottom: 1rem;
+  z-index: 450;
+  border-radius: 14px;
+  padding: 0.8rem 0.85rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.guessr-total-results {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 700;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 760px);
+  border-radius: 18px;
+  padding: 1.1rem;
+  color: #fff7ef;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.guessr-total-results[hidden] {
+  display: none !important;
+}
+
+.guessr-total-results h2 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+
+.guessr-total-score {
+  margin: 0;
+  font-size: clamp(1.4rem, 3.4vw, 2rem);
+  font-weight: 700;
+}
+
+.guessr-total-subline {
+  margin: 0;
+  color: #eadfce;
+}
+
+.guessr-round-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.guessr-round-review-btn {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff7ef;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  cursor: pointer;
+  min-height: 40px;
+}
+
+.guessr-total-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.guessr-map-dock {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 500;
+  width: 270px;
+  height: 170px;
+  border-radius: 14px;
+  padding: 0.45rem;
+  transition: width 0.24s ease, height 0.24s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.guessr-map-dock:hover,
+.guessr-map-dock:focus-within,
+.guessr-map-dock.is-expanded {
+  width: min(810px, 88vw);
+  height: min(510px, 72vh);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+  transform: translateY(-2px);
+}
+
+.guessr-stage.is-result .guessr-map-dock {
+  left: 1rem;
+  right: 1rem;
+  top: 1rem;
+  bottom: 1rem;
+  width: auto;
+  height: auto;
+  transform: none;
+}
+
+.guessr-stage.is-result .guessr-bottom-hud {
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 650;
+}
+
+.guessr-stage.is-result .guessr-top-hud {
+  z-index: 650;
+}
+
+.guessr-stage.is-result .guessr-result-summary {
+  z-index: 650;
+}
+
+.guessr-map {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.guessr-map:focus-visible {
+  outline: 3px solid #d8835f;
+  outline-offset: 2px;
+}
+
+.guessr-map .leaflet-control-zoom a {
+  color: #2f2b28;
+}
+
+.guess-pin,
+.answer-pin {
+  position: relative;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.guess-pin {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  background: #e94e3d;
+}
+
+.answer-pin {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  background: rgba(28, 76, 40, 0.9);
+}
+
+.answer-pin::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  width: 3px;
+  height: 22px;
+  border-radius: 2px;
+  background: #f5f0e6;
+}
+
+.answer-pin::after {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 8px;
+  width: 13px;
+  height: 9px;
+  border-radius: 2px 3px 3px 2px;
+  border: 1px solid rgba(245, 240, 230, 0.95);
+  background: linear-gradient(145deg, #3ca157, #2a8a3f);
+}
+
+.guessr-status {
+  margin: 0;
+  min-height: 1.4rem;
+  color: #f2eae1;
+}
+
+.guessr-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.guessr-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.58rem 1.2rem;
+  min-height: 44px;
+  background: var(--pine);
+  color: var(--paper);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guessr-btn--secondary {
+  background: var(--clay);
+}
+
+.guessr-btn--ghost {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.guessr-btn:disabled {
+  background: #b7afa8;
+  cursor: not-allowed;
+}
+
+.guessr-btn:focus-visible {
+  outline: 3px solid #d8835f;
+  outline-offset: 2px;
+}
+
+@media (max-width: 920px) {
+  .guessr-main {
+    padding: 0.2rem 0 1.5rem;
+  }
+
+  .guessr-stage {
+    width: 100%;
+    border-radius: 0;
+    height: calc(100vh - 116px);
+    min-height: 500px;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .guessr-stage.is-result .guessr-photo-panel {
+    right: 0.7rem;
+    bottom: 0.7rem;
+    width: auto;
+    height: auto;
+  }
+
+  .guessr-stage.is-result .guessr-photo-panel img {
+    max-width: min(46vw, 210px);
+    max-height: min(30vh, 190px);
+  }
+
+  .guessr-stage.is-result .guessr-photo-panel.is-expanded-photo img {
+    max-width: min(90vw, 620px);
+    max-height: min(76vh, 540px);
+  }
+
+  .guessr-top-hud {
+    left: 0.7rem;
+    top: 0.7rem;
+    gap: 0.6rem;
+    padding: 0.45rem 0.65rem;
+  }
+
+  .guessr-result-summary {
+    top: 0.7rem;
+    max-width: calc(100% - 9rem);
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 0.45rem 0.7rem;
+  }
+
+  .guessr-bottom-hud {
+    left: 0.7rem;
+    right: 0.7rem;
+    bottom: 0.7rem;
+    padding: 0.7rem;
+  }
+
+  .guessr-total-results {
+    width: calc(100% - 1.4rem);
+    padding: 0.9rem;
+  }
+
+  .guessr-map-dock,
+  .guessr-map-dock:hover,
+  .guessr-map-dock:focus-within,
+  .guessr-map-dock.is-expanded {
+    right: 0.7rem;
+    bottom: 5.9rem;
+    width: min(320px, calc(100vw - 1.4rem));
+    height: 220px;
+    transform: none;
+  }
+
+  .guessr-stage.is-result .guessr-map-dock,
+  .guessr-stage.is-result .guessr-map-dock:hover,
+  .guessr-stage.is-result .guessr-map-dock:focus-within,
+  .guessr-stage.is-result .guessr-map-dock.is-expanded {
+    left: 0.7rem;
+    right: 0.7rem;
+    top: 0.7rem;
+    bottom: 0.7rem;
+    width: auto;
+    height: auto;
+  }
+
+  .guessr-stage.is-result .guessr-bottom-hud {
+    left: 0.7rem;
+    right: 0.7rem;
+    bottom: 0.7rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .guessr-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .guessr-back {
+    margin-bottom: 0;
+  }
+
+  .guessr-header p {
+    display: none;
+  }
+
+  .guessr-btn {
+    min-height: 40px;
+    padding: 0.5rem 1rem;
+  }
+
+  .guessr-status {
+    font-size: 0.9rem;
+  }
+
+  .guessr-map-dock,
+  .guessr-map-dock:hover,
+  .guessr-map-dock:focus-within,
+  .guessr-map-dock.is-expanded {
+    width: min(300px, calc(100vw - 1.4rem));
+    height: 200px;
+    bottom: 6.1rem;
+  }
+
+  .guessr-stage.is-result .guessr-photo-panel {
+    width: auto;
+    height: auto;
+  }
+
+  .guessr-stage.is-result .guessr-photo-panel img {
+    max-width: min(54vw, 180px);
+    max-height: min(26vh, 155px);
+  }
+
+  .guessr-stage.is-result .guessr-photo-panel.is-expanded-photo img {
+    max-width: min(94vw, 540px);
+    max-height: min(70vh, 500px);
+  }
+}

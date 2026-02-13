@@ -515,6 +515,25 @@ summary:focus-visible {
   overscroll-behavior-x: contain;
 }
 
+.gallery__guessr-wrap {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.gallery__guessr-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: auto;
+  min-width: 280px;
+}
+
+.gallery__guessr-btn::before {
+  content: "🧭";
+  line-height: 1;
+}
+
 .gallery__item {
   flex: 0 0 260px;
   aspect-ratio: 4 / 5;
@@ -572,6 +591,11 @@ footer {
 
   .gallery__item {
     flex-basis: 220px;
+  }
+
+  .gallery__guessr-btn {
+    width: auto;
+    min-width: 0;
   }
 }
 

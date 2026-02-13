@@ -66,6 +66,8 @@ const translations = {
     sat_dinner: "Dinner",
     gallery_eyebrow: "Gallery 📸",
     gallery_title: "Gallery 📸",
+    gallery_guess_prompt: "Do you know where we are in the photos?",
+    gallery_guess_button: "SandraOgBenjaminGuessr",
     footer_line: "We can’t wait to celebrate with you."
   },
   no: {
@@ -135,6 +137,8 @@ const translations = {
     sat_dinner: "Middag",
     gallery_eyebrow: "Galleri 📸",
     gallery_title: "Galleri 📸",
+    gallery_guess_prompt: "Vet du hvor vi er på bildene?",
+    gallery_guess_button: "SandraOgBenjaminGuessr",
     footer_line: "Vi gleder oss til å feire med dere."
   }
 };
@@ -144,6 +148,24 @@ const translatable = document.querySelectorAll("[data-i18n]");
 const siteHeader = document.querySelector(".site-header");
 const navToggle = document.querySelector(".nav-toggle");
 const navLinks = document.querySelectorAll(".site-nav a");
+const LANGUAGE_STORAGE_KEY = "wedding_lang";
+
+const getStoredLanguage = () => {
+  try {
+    const value = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    return value === "en" || value === "no" ? value : null;
+  } catch (_error) {
+    return null;
+  }
+};
+
+const setStoredLanguage = (lang) => {
+  try {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+  } catch (_error) {
+    // Ignore storage errors (private mode / blocked storage).
+  }
+};
 
 const setLanguage = (lang) => {
   const dict = translations[lang];
@@ -156,6 +178,7 @@ const setLanguage = (lang) => {
   switchButtons.forEach((btn) =>
     btn.classList.toggle("is-active", btn.dataset.lang === lang)
   );
+  setStoredLanguage(lang);
 };
 
 switchButtons.forEach((btn) => {
@@ -164,7 +187,7 @@ switchButtons.forEach((btn) => {
 
 const browserLang = (navigator.language || "").toLowerCase();
 const isNorwegian = browserLang.startsWith("no") || browserLang.startsWith("nb") || browserLang.startsWith("nn");
-setLanguage(isNorwegian ? "no" : "en");
+setLanguage(getStoredLanguage() || (isNorwegian ? "no" : "en"));
 
 const closeMobileMenu = () => {
   if (!siteHeader || !navToggle) return;

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="page_title">SandraOgBenjaminGuessr</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="guessr.css" />
+  </head>
+  <body>
+    <header class="guessr-header">
+      <div class="guessr-header-top">
+        <a class="guessr-back" href="index.html#gallery" data-i18n="back_to_gallery">← Back to gallery</a>
+        <div class="lang-switch" role="group" aria-label="Language selector">
+          <button type="button" class="lang-switch__btn is-active" data-lang="en">🇬🇧 EN</button>
+          <button type="button" class="lang-switch__btn" data-lang="no">🇳🇴 NO</button>
+        </div>
+      </div>
+      <h1>SandraOgBenjaminGuessr</h1>
+      <p data-i18n="tagline">Guess where each photo was taken.</p>
+    </header>
+
+    <main class="guessr-main">
+      <section id="guessrStage" class="guessr-stage">
+        <div class="guessr-photo-panel">
+          <img id="roundPhoto" src="" alt="Guessr round photo" />
+          <div id="photoControls" class="guessr-photo-controls guessr-glass" aria-label="Photo zoom controls">
+            <button id="photoZoomOutButton" type="button" class="guessr-photo-zoom-btn" aria-label="Zoom out">-</button>
+            <button id="photoZoomResetButton" type="button" class="guessr-photo-zoom-btn" aria-label="Reset zoom">100%</button>
+            <button id="photoZoomInButton" type="button" class="guessr-photo-zoom-btn" aria-label="Zoom in">+</button>
+          </div>
+        </div>
+
+        <div class="guessr-top-hud guessr-glass">
+          <p id="roundCount">Round: 1</p>
+          <p id="totalScore">Total: 0</p>
+        </div>
+
+        <p id="resultSummary" class="guessr-result-summary guessr-glass" aria-live="polite"></p>
+
+        <div class="guessr-bottom-hud guessr-glass">
+          <p id="statusText" class="guessr-status">Click on the map to place your guess.</p>
+          <div class="guessr-actions">
+            <button id="guessButton" type="button" class="guessr-btn" data-i18n="button_guess">Guess</button>
+            <button id="nextButton" type="button" class="guessr-btn guessr-btn--secondary" disabled data-i18n="button_next_round">Next round</button>
+          </div>
+        </div>
+
+        <section id="mapDock" class="guessr-map-dock guessr-glass" aria-label="World map for placing guess">
+          <div id="mapSurface" class="guessr-map"></div>
+        </section>
+
+        <section id="totalResultsPanel" class="guessr-total-results guessr-glass" hidden>
+          <h2 data-i18n="summary_title">Your Total Score</h2>
+          <p id="finalTotalScore" class="guessr-total-score">0 / 25000</p>
+          <p id="finalSummaryLine" class="guessr-total-subline"></p>
+          <div id="roundReviewButtons" class="guessr-round-list"></div>
+          <div class="guessr-total-actions">
+            <a class="guessr-btn guessr-btn--ghost" href="index.html#gallery" data-i18n="back_to_homepage">Back to homepage</a>
+            <button id="playAgainButton" type="button" class="guessr-btn" data-i18n="play_again">Play again</button>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="photo-locations.js"></script>
+    <script src="guessr.js"></script>
+  </body>
+</html>
