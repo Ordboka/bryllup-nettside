@@ -601,6 +601,20 @@ body {
     transform: none;
   }
 
+  .guessr-stage.is-mobile-map-focused .guessr-map-dock,
+  .guessr-stage.is-mobile-map-focused .guessr-map-dock:hover,
+  .guessr-stage.is-mobile-map-focused .guessr-map-dock:focus-within,
+  .guessr-stage.is-mobile-map-focused .guessr-map-dock.is-expanded {
+    width: calc(100vw - 1.4rem);
+    height: min(58vh, 430px);
+    bottom: 5.9rem;
+  }
+
+  .guessr-stage.is-mobile-map-focused .guessr-photo-panel {
+    align-items: flex-start;
+    padding-top: 0.7rem;
+  }
+
   .guessr-stage.is-result .guessr-map-dock,
   .guessr-stage.is-result .guessr-map-dock:hover,
   .guessr-stage.is-result .guessr-map-dock:focus-within,
@@ -650,6 +664,20 @@ body {
     width: min(300px, calc(100vw - 1.4rem));
     height: 200px;
     bottom: 6.1rem;
+  }
+
+  .guessr-stage.is-mobile-map-focused .guessr-map-dock,
+  .guessr-stage.is-mobile-map-focused .guessr-map-dock:hover,
+  .guessr-stage.is-mobile-map-focused .guessr-map-dock:focus-within,
+  .guessr-stage.is-mobile-map-focused .guessr-map-dock.is-expanded {
+    width: calc(100vw - 1.4rem);
+    height: min(56vh, 390px);
+    bottom: 6.1rem;
+  }
+
+  .guessr-stage.is-mobile-map-focused .guessr-photo-panel {
+    align-items: flex-start;
+    padding-top: 0.65rem;
   }
 
   .guessr-stage.is-result .guessr-photo-panel {

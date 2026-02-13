@@ -101,6 +101,7 @@ const photoZoomInButton = document.querySelector("#photoZoomInButton");
 const PHOTO_ZOOM_MIN = 1;
 const PHOTO_ZOOM_MAX = 4;
 const PHOTO_ZOOM_STEP = 0.25;
+const MOBILE_LAYOUT_QUERY = "(max-width: 920px)";
 
 let map = null;
 let guessMapMarker = null;
@@ -129,6 +130,7 @@ let photoPanStartX = 0;
 let photoPanStartY = 0;
 let photoDragMoved = false;
 let currentLang = "en";
+let mobileLayoutMediaQuery = null;
 
 const isNumber = (value) => typeof value === "number" && Number.isFinite(value);
 
@@ -346,6 +348,22 @@ const refreshMapSize = () => {
   window.requestAnimationFrame(() => map.invalidateSize());
 };
 
+const isMobileLayout = () => Boolean(mobileLayoutMediaQuery && mobileLayoutMediaQuery.matches);
+
+const setMobileMapFocus = (isFocused) => {
+  if (!guessrStage || !mapDock) return;
+  if (mode !== "playing" || !isMobileLayout()) {
+    guessrStage.classList.remove("is-mobile-map-focused");
+    mapDock.classList.remove("is-expanded");
+    return;
+  }
+
+  guessrStage.classList.toggle("is-mobile-map-focused", isFocused);
+  mapDock.classList.toggle("is-expanded", isFocused);
+  setTimeout(refreshMapSize, 20);
+  setTimeout(refreshMapSize, 260);
+};
+
 const clearRoundMarkers = () => {
   if (answerRevealAnimationFrame) {
     window.cancelAnimationFrame(answerRevealAnimationFrame);
@@ -537,6 +555,7 @@ const clearStageModes = () => {
   if (!guessrStage) return;
   guessrStage.classList.remove("is-result");
   guessrStage.classList.remove("is-summary");
+  guessrStage.classList.remove("is-mobile-map-focused");
 };
 
 const showTotalResults = () => {
@@ -640,6 +659,7 @@ const showRoundReview = (index) => {
 const startRound = () => {
   mode = "playing";
   clearStageModes();
+  setMobileMapFocus(false);
 
   if (totalResultsPanel) {
     totalResultsPanel.hidden = true;
@@ -794,11 +814,13 @@ const setupMapDockBehavior = () => {
 
   const expandDock = () => {
     if (mode === "summary") return;
+    if (isMobileLayout()) return;
     mapDock.classList.add("is-expanded");
     setTimeout(refreshMapSize, 260);
   };
 
   const collapseDock = () => {
+    if (isMobileLayout()) return;
     mapDock.classList.remove("is-expanded");
     setTimeout(refreshMapSize, 260);
   };
@@ -834,6 +856,13 @@ const initMap = () => {
   map.on("click", (event) => {
     placeGuess(event.latlng.lat, event.latlng.lng);
   });
+
+  if (mapSurface) {
+    mapSurface.addEventListener("pointerdown", () => {
+      if (mode !== "playing") return;
+      setMobileMapFocus(true);
+    });
+  }
 
   setupMapDockBehavior();
   window.addEventListener("resize", refreshMapSize);
@@ -898,6 +927,9 @@ roundPhoto.addEventListener("wheel", (event) => {
 
 if (photoPanel) {
   photoPanel.addEventListener("pointerdown", (event) => {
+    if (mode === "playing") {
+      setMobileMapFocus(false);
+    }
     if (photoZoom <= PHOTO_ZOOM_MIN) return;
     if (event.target instanceof HTMLElement && event.target.closest(".guessr-photo-zoom-btn")) return;
     isPhotoDragging = true;
@@ -970,6 +1002,10 @@ window.addEventListener("resize", () => {
 
 const browserLang = (navigator.language || "").toLowerCase();
 const isNorwegian = browserLang.startsWith("no") || browserLang.startsWith("nb") || browserLang.startsWith("nn");
+mobileLayoutMediaQuery = window.matchMedia(MOBILE_LAYOUT_QUERY);
+if (mobileLayoutMediaQuery && typeof mobileLayoutMediaQuery.addEventListener === "function") {
+  mobileLayoutMediaQuery.addEventListener("change", () => setMobileMapFocus(false));
+}
 setLanguage(getStoredLanguage() || (isNorwegian ? "no" : "en"));
 
 resetPhotoZoom();
