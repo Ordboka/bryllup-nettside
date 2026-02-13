@@ -36,6 +36,8 @@ const translations = {
     zoom_out: "Zoom out",
     zoom_reset: "Reset zoom",
     zoom_in: "Zoom in",
+    tooltip_guess: "Your guess",
+    tooltip_answer: "Answer",
     data_error_missing_data: "Missing photo location data. Check photo-locations.js.",
     data_error_no_photos: "Add coordinates in photo-locations.js (numbers only, no quotes) to start playing.",
     data_error_init_fail: "Could not initialize the map. Check internet access and photo-locations.js."
@@ -68,6 +70,8 @@ const translations = {
     zoom_out: "Zoom ut",
     zoom_reset: "Tilbakestill zoom",
     zoom_in: "Zoom inn",
+    tooltip_guess: "Ditt gjett",
+    tooltip_answer: "Svar",
     data_error_missing_data: "Mangler bildelokasjoner. Sjekk photo-locations.js.",
     data_error_no_photos: "Legg til koordinater i photo-locations.js (kun tall, uten anførselstegn) for å starte.",
     data_error_init_fail: "Kunne ikke initialisere kartet. Sjekk internettilgang og photo-locations.js."
@@ -103,6 +107,7 @@ let guessMapMarker = null;
 let answerMapMarker = null;
 let answerRevealLine = null;
 let answerRevealAnimationFrame = null;
+let confettiLayer = null;
 
 let mode = "playing";
 let currentRoundNumber = 1;
@@ -285,12 +290,56 @@ const getDisplayPoints = (guessLatValue, guessLngValue, answerLatValue, answerLn
   };
 };
 
-const markerIcon = (className) =>
-  L.divIcon({
+const markerIcon = (className) => {
+  const isAnswer = className === "answer-pin";
+  const size = isAnswer ? 34 : 16;
+  const anchor = size / 2;
+  return L.divIcon({
     className,
-    iconSize: [16, 16],
-    iconAnchor: [8, 8]
+    iconSize: [size, size],
+    iconAnchor: [anchor, anchor]
   });
+};
+
+const createGuessMarker = (latlng) =>
+  L.marker(latlng, { icon: markerIcon("guess-pin") })
+    .bindTooltip(t("tooltip_guess"), { direction: "top", offset: [0, -8] });
+
+const createAnswerMarker = (latlng, options = {}) => {
+  const { opacity = 1 } = options;
+  return L.marker(latlng, { icon: markerIcon("answer-pin"), opacity })
+    .bindTooltip(t("tooltip_answer"), { direction: "top", offset: [0, -12] });
+};
+
+const ensureConfettiLayer = () => {
+  if (confettiLayer && confettiLayer.isConnected) return confettiLayer;
+  if (!guessrStage) return null;
+  confettiLayer = document.createElement("div");
+  confettiLayer.className = "guessr-confetti-layer";
+  guessrStage.appendChild(confettiLayer);
+  return confettiLayer;
+};
+
+const launchPerfectScoreConfetti = () => {
+  const layer = ensureConfettiLayer();
+  if (!layer) return;
+
+  const colors = ["#f4efe3", "#d9a441", "#e94e3d", "#3ca157", "#84a06f"];
+  const pieceCount = 56;
+
+  for (let index = 0; index < pieceCount; index += 1) {
+    const piece = document.createElement("span");
+    piece.className = "guessr-confetti-piece";
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.setProperty("--confetti-color", colors[index % colors.length]);
+    piece.style.setProperty("--confetti-rotate", `${Math.random() * 360}deg`);
+    piece.style.setProperty("--confetti-drift", `${(Math.random() - 0.5) * 180}px`);
+    piece.style.animationDelay = `${Math.random() * 120}ms`;
+    piece.style.animationDuration = `${1150 + Math.random() * 700}ms`;
+    layer.appendChild(piece);
+    window.setTimeout(() => piece.remove(), 2100);
+  }
+};
 
 const refreshMapSize = () => {
   if (!map) return;
@@ -561,8 +610,8 @@ const showRoundReview = (index) => {
 
   clearRoundMarkers();
   const displayPoints = getDisplayPoints(result.guessLat, result.guessLng, result.answerLat, result.answerLng);
-  guessMapMarker = L.marker(displayPoints.guess, { icon: markerIcon("guess-pin") }).addTo(map);
-  answerMapMarker = L.marker(displayPoints.answer, { icon: markerIcon("answer-pin") }).addTo(map);
+  guessMapMarker = createGuessMarker(displayPoints.guess).addTo(map);
+  answerMapMarker = createAnswerMarker(displayPoints.answer).addTo(map);
   drawAnswerRevealLine(displayPoints.guess, displayPoints.answer, { animate: false });
   map.fitBounds(
     [displayPoints.guess, displayPoints.answer],
@@ -631,7 +680,7 @@ const placeGuess = (lat, lng) => {
   if (guessMapMarker) {
     guessMapMarker.setLatLng([lat, lng]);
   } else {
-    guessMapMarker = L.marker([lat, lng], { icon: markerIcon("guess-pin") }).addTo(map);
+    guessMapMarker = createGuessMarker([lat, lng]).addTo(map);
   }
 
   statusText.textContent = t("status_guess_placed");
@@ -655,12 +704,9 @@ const submitGuess = () => {
   if (guessMapMarker) {
     guessMapMarker.setLatLng(displayPoints.guess);
   } else {
-    guessMapMarker = L.marker(displayPoints.guess, { icon: markerIcon("guess-pin") }).addTo(map);
+    guessMapMarker = createGuessMarker(displayPoints.guess).addTo(map);
   }
-  answerMapMarker = L.marker(displayPoints.answer, {
-    icon: markerIcon("answer-pin"),
-    opacity: 0
-  }).addTo(map);
+  answerMapMarker = createAnswerMarker(displayPoints.answer, { opacity: 0 }).addTo(map);
   drawAnswerRevealLine(displayPoints.guess, displayPoints.answer, {
     animate: true,
     durationMs: 700,
@@ -695,6 +741,10 @@ const submitGuess = () => {
     distance: formatDistance(distanceKm),
     score: roundScore
   });
+
+  if (roundScore === SCORE_MAX) {
+    launchPerfectScoreConfetti();
+  }
 
   updateHud();
   guessButton.disabled = true;
