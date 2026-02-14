@@ -161,9 +161,10 @@ body {
   max-height: 100%;
   object-fit: contain;
   object-position: center;
-  transform: translate(var(--photo-pan-x), var(--photo-pan-y)) scale(var(--photo-zoom));
+  transform: translate3d(var(--photo-pan-x), var(--photo-pan-y), 0) scale(var(--photo-zoom));
   transform-origin: center;
   transition: transform 0.14s ease;
+  will-change: transform;
   touch-action: none;
   display: block;
 }
@@ -177,6 +178,10 @@ body {
 }
 
 .guessr-photo-panel.is-photo-dragging img {
+  transition: none;
+}
+
+.guessr-photo-panel.is-photo-touch-manipulating img {
   transition: none;
 }
 

@@ -624,6 +624,11 @@ const getPhotoTouchMetrics = () => {
   };
 };
 
+const syncPhotoTouchManipulationClass = () => {
+  if (!photoPanel) return;
+  photoPanel.classList.toggle("is-photo-touch-manipulating", photoTouchPoints.size > 0);
+};
+
 const getAnchoredPan = (nextZoom, anchorOffset) => {
   if (!anchorOffset || photoZoom <= 0 || nextZoom <= 0) {
     return { x: photoPanX, y: photoPanY };
@@ -1111,6 +1116,7 @@ if (photoPanel) {
     if (event.target instanceof HTMLElement && event.target.closest(".guessr-photo-zoom-btn")) return;
     if (event.pointerType === "touch") {
       photoTouchPoints.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      syncPhotoTouchManipulationClass();
       photoPanel.setPointerCapture(event.pointerId);
       if (photoTouchPoints.size >= 2) {
         const metrics = getPhotoTouchMetrics();
@@ -1153,6 +1159,7 @@ if (photoPanel) {
     if (event.pointerType === "touch") {
       if (!photoTouchPoints.has(event.pointerId)) return;
       photoTouchPoints.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      syncPhotoTouchManipulationClass();
       if (photoTouchPoints.size >= 2) {
         const metrics = getPhotoTouchMetrics();
         if (metrics && photoPinchStartDistance > 0) {
@@ -1190,6 +1197,7 @@ if (photoPanel) {
     if (event.pointerType === "touch") {
       const removed = photoTouchPoints.delete(event.pointerId);
       if (!removed) return;
+      syncPhotoTouchManipulationClass();
       if (photoPanel.hasPointerCapture(event.pointerId)) {
         photoPanel.releasePointerCapture(event.pointerId);
       }
@@ -1225,6 +1233,7 @@ if (photoPanel) {
       isPhotoDragging = false;
       photoDragPointerId = null;
       photoPanel.classList.remove("is-photo-dragging");
+      syncPhotoTouchManipulationClass();
       if (photoZoom <= PHOTO_ZOOM_MIN) {
         resetPhotoPan();
       }
