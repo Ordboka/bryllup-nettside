@@ -32,16 +32,16 @@ window.PHOTO_LOCATIONS = {
     { src: "Pictures/Carousel/PXL_20250922_070323568.webp", label: "PXL_20250922_070323568", lat: 32.0692806, lng: 118.7929917 },
     { src: "Pictures/Carousel/PXL_20250923_121951403.webp", label: "PXL_20250923_121951403", lat: 30.2445278, lng: 120.2123806 },
     { src: "Pictures/Carousel/PXL_20250924_110823996.webp", label: "PXL_20250924_110823996", lat: 31.2424861, lng: 121.4865361 },
-    { src: "Pictures/Carousel/20210207_135614.webp", label: "20210207_135614", lat: null, lng: null },
-    { src: "Pictures/Carousel/20210517_105600.webp", label: "20210517_105600", lat: null, lng: null },
-    { src: "Pictures/Carousel/20220604_134650.webp", label: "20220604_134650", lat: null, lng: null },
-    { src: "Pictures/Carousel/20220626_164937.webp", label: "20220626_164937", lat: null, lng: null },
-    { src: "Pictures/Carousel/IMG_0135.webp", label: "IMG_0135", lat: null, lng: null },
-    { src: "Pictures/Carousel/IMG_0382.webp", label: "IMG_0382", lat: null, lng: null },
-    { src: "Pictures/Carousel/IMG_1062.webp", label: "IMG_1062", lat: null, lng: null },
-    { src: "Pictures/Carousel/IMG_1091.webp", label: "IMG_1091", lat: null, lng: null },
-    { src: "Pictures/Carousel/IMG_1107.webp", label: "IMG_1107", lat: null, lng: null },
-    { src: "Pictures/Carousel/IMG_1139.webp", label: "IMG_1139", lat: null, lng: null },
-    { src: "Pictures/Carousel/IMG_2106.webp", label: "IMG_2106", lat: null, lng: null }
+    { src: "Pictures/Carousel/20210207_135614.webp", label: "20210207_135614", lat: 63.393017514908195, lng: 10.364176379133298 },
+    { src: "Pictures/Carousel/20210517_105600.webp", label: "20210517_105600", lat: 63.41450167727076, lng: 10.418335701292056 },
+    { src: "Pictures/Carousel/20220604_134650.webp", label: "20220604_134650", lat: 60.29720424465647, lng: 9.466629285765327 },
+    { src: "Pictures/Carousel/20220626_164937.webp", label: "20220626_164937", lat: 42.81487341569471, lng: -1.641310352697919 },
+    { src: "Pictures/Carousel/IMG_0135.webp", label: "IMG_0135", lat: 59.26554298819862, lng: 10.459393856020045 },
+    { src: "Pictures/Carousel/IMG_0382.webp", label: "IMG_0382", lat: 43.269398599154265, lng: -2.934198386032951 },
+    { src: "Pictures/Carousel/IMG_1062.webp", label: "IMG_1062", lat: 47.620458345123886, lng: -122.35078764650704 },
+    { src: "Pictures/Carousel/IMG_1091.webp", label: "IMG_1091", lat: 37.802940171179245, lng: -122.44821671341734 },
+    { src: "Pictures/Carousel/IMG_1107.webp", label: "IMG_1107", lat: 37.80658503772361, lng: -122.45015342273985 },
+    { src: "Pictures/Carousel/IMG_1139.webp", label: "IMG_1139", lat: 37.81132873951624, lng: -122.41077992531842 },
+    { src: "Pictures/Carousel/IMG_2106.webp", label: "IMG_2106", lat: 49.01386179039626, lng: 8.403709881608583 }
   ]
 };
