@@ -151,6 +151,9 @@ let photoDragStartY = 0;
 let photoPanStartX = 0;
 let photoPanStartY = 0;
 let photoDragMoved = false;
+const photoTouchPoints = new Map();
+let photoPinchStartDistance = 0;
+let photoPinchStartZoom = PHOTO_ZOOM_MIN;
 let currentLang = "en";
 let mobileLayoutMediaQuery = null;
 let hasCopiedResults = false;
@@ -605,6 +608,19 @@ const getPhotoAnchorOffset = (clientX, clientY) => {
   return {
     x: clientX - rect.left - rect.width / 2,
     y: clientY - rect.top - rect.height / 2
+  };
+};
+
+const getPhotoTouchMetrics = () => {
+  if (photoTouchPoints.size < 2) return null;
+  const [first, second] = Array.from(photoTouchPoints.values());
+  if (!first || !second) return null;
+  const deltaX = second.x - first.x;
+  const deltaY = second.y - first.y;
+  return {
+    distance: Math.hypot(deltaX, deltaY),
+    midX: (first.x + second.x) / 2,
+    midY: (first.y + second.y) / 2
   };
 };
 
@@ -1094,6 +1110,31 @@ if (photoPanel) {
     }
     if (event.target instanceof HTMLElement && event.target.closest(".guessr-photo-zoom-btn")) return;
     if (event.pointerType === "touch") {
+      photoTouchPoints.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      photoPanel.setPointerCapture(event.pointerId);
+      if (photoTouchPoints.size >= 2) {
+        const metrics = getPhotoTouchMetrics();
+        if (metrics) {
+          isPhotoDragging = false;
+          photoDragPointerId = null;
+          photoPinchStartDistance = Math.max(metrics.distance, 1);
+          photoPinchStartZoom = photoZoom;
+          photoDragMoved = true;
+        }
+        photoPanel.classList.remove("is-photo-dragging");
+      } else {
+        photoPinchStartDistance = 0;
+        photoPinchStartZoom = photoZoom;
+        isPhotoDragging = true;
+        photoDragMoved = false;
+        photoDragPointerId = event.pointerId;
+        photoDragStartX = event.clientX;
+        photoDragStartY = event.clientY;
+        photoPanStartX = photoPanX;
+        photoPanStartY = photoPanY;
+        photoPanel.classList.add("is-photo-dragging");
+      }
+      event.preventDefault();
       return;
     }
     isPhotoDragging = true;
@@ -1109,6 +1150,33 @@ if (photoPanel) {
   });
 
   photoPanel.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "touch") {
+      if (!photoTouchPoints.has(event.pointerId)) return;
+      photoTouchPoints.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (photoTouchPoints.size >= 2) {
+        const metrics = getPhotoTouchMetrics();
+        if (metrics && photoPinchStartDistance > 0) {
+          const scale = metrics.distance / photoPinchStartDistance;
+          setPhotoZoom(photoPinchStartZoom * scale, {
+            anchorClientX: metrics.midX,
+            anchorClientY: metrics.midY
+          });
+          photoDragMoved = true;
+        }
+        photoPanel.classList.remove("is-photo-dragging");
+        isPhotoDragging = false;
+        photoDragPointerId = null;
+      } else if (isPhotoDragging && event.pointerId === photoDragPointerId) {
+        const deltaX = event.clientX - photoDragStartX;
+        const deltaY = event.clientY - photoDragStartY;
+        if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
+          photoDragMoved = true;
+        }
+        setPhotoPan(photoPanStartX + deltaX, photoPanStartY + deltaY);
+      }
+      event.preventDefault();
+      return;
+    }
     if (!isPhotoDragging || event.pointerId !== photoDragPointerId) return;
     const deltaX = event.clientX - photoDragStartX;
     const deltaY = event.clientY - photoDragStartY;
@@ -1119,6 +1187,49 @@ if (photoPanel) {
   });
 
   const stopPhotoDrag = (event) => {
+    if (event.pointerType === "touch") {
+      const removed = photoTouchPoints.delete(event.pointerId);
+      if (!removed) return;
+      if (photoPanel.hasPointerCapture(event.pointerId)) {
+        photoPanel.releasePointerCapture(event.pointerId);
+      }
+      if (photoTouchPoints.size >= 2) {
+        const metrics = getPhotoTouchMetrics();
+        if (metrics) {
+          isPhotoDragging = false;
+          photoDragPointerId = null;
+          photoPinchStartDistance = Math.max(metrics.distance, 1);
+          photoPinchStartZoom = photoZoom;
+        }
+        photoPanel.classList.remove("is-photo-dragging");
+        return;
+      }
+      if (photoTouchPoints.size === 1) {
+        const remaining = Array.from(photoTouchPoints.entries())[0];
+        if (remaining) {
+          const [remainingPointerId, point] = remaining;
+          photoPinchStartDistance = 0;
+          photoPinchStartZoom = photoZoom;
+          isPhotoDragging = true;
+          photoDragPointerId = remainingPointerId;
+          photoDragStartX = point.x;
+          photoDragStartY = point.y;
+          photoPanStartX = photoPanX;
+          photoPanStartY = photoPanY;
+          photoPanel.classList.add("is-photo-dragging");
+          return;
+        }
+      }
+      photoPinchStartDistance = 0;
+      photoPinchStartZoom = photoZoom;
+      isPhotoDragging = false;
+      photoDragPointerId = null;
+      photoPanel.classList.remove("is-photo-dragging");
+      if (photoZoom <= PHOTO_ZOOM_MIN) {
+        resetPhotoPan();
+      }
+      return;
+    }
     if (!isPhotoDragging || event.pointerId !== photoDragPointerId) return;
     isPhotoDragging = false;
     photoDragPointerId = null;
