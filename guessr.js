@@ -1093,6 +1093,9 @@ if (photoPanel) {
       setMobileMapFocus(false);
     }
     if (event.target instanceof HTMLElement && event.target.closest(".guessr-photo-zoom-btn")) return;
+    if (event.pointerType === "touch") {
+      return;
+    }
     isPhotoDragging = true;
     photoDragMoved = false;
     photoDragPointerId = event.pointerId;
