@@ -3,6 +3,7 @@ const SCORE_MAX = 5000;
 const SCORE_SCALE_KM = 1492.7;
 const EARTH_RADIUS_KM = 6371;
 const LANGUAGE_STORAGE_KEY = "wedding_lang";
+const GUESSR_SEEN_PHOTOS_STORAGE_KEY = "wedding_guessr_seen_photos_v1";
 const switchButtons = document.querySelectorAll(".lang-switch__btn");
 const translatable = document.querySelectorAll("[data-i18n]");
 const photoControls = document.querySelector("#photoControls");
@@ -138,6 +139,7 @@ let accumulatedScore = 0;
 let currentPhoto = null;
 let remainingPhotos = [];
 let playablePhotos = [];
+let seenPhotoSources = new Set();
 let sessionResults = [];
 let guessLat = null;
 let guessLng = null;
@@ -172,6 +174,37 @@ const getStoredLanguage = () => {
 const setStoredLanguage = (lang) => {
   try {
     localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+  } catch (_error) {
+    // Ignore storage errors.
+  }
+};
+
+const normalizeSeenPhotoSources = (candidateSources) => {
+  const allowedSources = new Set(
+    candidateSources.filter((source) => typeof source === "string" && source.trim().length > 0)
+  );
+  seenPhotoSources = new Set(Array.from(seenPhotoSources).filter((source) => allowedSources.has(source)));
+};
+
+const loadSeenPhotoSources = (candidateSources) => {
+  seenPhotoSources = new Set();
+  try {
+    const raw = localStorage.getItem(GUESSR_SEEN_PHOTOS_STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return;
+    seenPhotoSources = new Set(
+      parsed.filter((source) => typeof source === "string" && source.trim().length > 0)
+    );
+  } catch (_error) {
+    seenPhotoSources = new Set();
+  }
+  normalizeSeenPhotoSources(candidateSources);
+};
+
+const saveSeenPhotoSources = () => {
+  try {
+    localStorage.setItem(GUESSR_SEEN_PHOTOS_STORAGE_KEY, JSON.stringify(Array.from(seenPhotoSources)));
   } catch (_error) {
     // Ignore storage errors.
   }
@@ -556,8 +589,29 @@ const pickRandomPhoto = () => {
     remainingPhotos = [...playablePhotos];
   }
 
-  const index = Math.floor(Math.random() * remainingPhotos.length);
-  return remainingPhotos.splice(index, 1)[0];
+  if (!remainingPhotos.length) {
+    return null;
+  }
+
+  if (!remainingPhotos.some((photo) => !seenPhotoSources.has(photo.src))) {
+    seenPhotoSources.clear();
+    saveSeenPhotoSources();
+  }
+
+  const availablePool = remainingPhotos.filter((photo) => !seenPhotoSources.has(photo.src));
+  const selectionPool = availablePool.length ? availablePool : remainingPhotos;
+  const chosenPhoto = selectionPool[Math.floor(Math.random() * selectionPool.length)];
+  const removeIndex = remainingPhotos.findIndex((photo) => photo === chosenPhoto);
+  if (removeIndex >= 0) {
+    remainingPhotos.splice(removeIndex, 1);
+  }
+
+  if (chosenPhoto && typeof chosenPhoto.src === "string" && chosenPhoto.src.length > 0) {
+    seenPhotoSources.add(chosenPhoto.src);
+    saveSeenPhotoSources();
+  }
+
+  return chosenPhoto || null;
 };
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
@@ -838,6 +892,10 @@ const startRound = () => {
 
   clearRoundMarkers();
   currentPhoto = pickRandomPhoto();
+  if (!currentPhoto) {
+    setDataError(t("data_error_no_photos"));
+    return;
+  }
   roundPhoto.src = currentPhoto.src;
   roundPhoto.alt = currentPhoto.label || t("photo_alt");
   if (photoPanel) {
@@ -980,6 +1038,8 @@ const restartGame = () => {
   sessionResults = [];
   hasCopiedResults = false;
   remainingPhotos = [...playablePhotos];
+  normalizeSeenPhotoSources(playablePhotos.map((photo) => photo.src));
+  saveSeenPhotoSources();
   startRound();
 };
 
@@ -1065,6 +1125,7 @@ const init = () => {
       return;
     }
 
+    loadSeenPhotoSources(playablePhotos.map((photo) => photo.src));
     initMap();
     restartGame();
   } catch (error) {
