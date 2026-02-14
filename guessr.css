@@ -97,7 +97,7 @@ body {
 .guessr-stage.is-summary .guessr-bottom-hud,
 .guessr-stage.is-summary .guessr-top-hud,
 .guessr-stage.is-summary .guessr-result-summary,
-.guessr-stage.is-summary .guessr-map-dock,
+.guessr-stage.is-summary .guessr-map-stack,
 .guessr-stage.is-summary .guessr-photo-panel {
   opacity: 0.2;
   pointer-events: none;
@@ -218,7 +218,7 @@ body {
 }
 
 .guessr-stage.is-result .guessr-photo-panel {
-  inset: auto 1rem 1rem auto;
+  inset: auto 1rem calc(1rem + env(safe-area-inset-bottom, 0px) + 4.8rem) auto;
   width: auto;
   height: auto;
   aspect-ratio: auto;
@@ -243,7 +243,7 @@ body {
   width: auto;
   height: auto;
   max-width: min(36vw, 260px);
-  max-height: min(38vh, 260px);
+  max-height: min(24vh, 190px);
   object-fit: contain !important;
   object-position: center center !important;
   background: #1b211f;
@@ -382,15 +382,22 @@ body {
 }
 
 .guessr-map-dock {
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
-  z-index: 500;
+  position: relative;
   width: 270px;
   height: 170px;
   border-radius: 14px;
   padding: 0.45rem;
   transition: width 0.24s ease, height 0.24s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.guessr-map-stack {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 500;
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 0.55rem;
 }
 
 .guessr-map-dock:hover,
@@ -402,14 +409,42 @@ body {
   transform: translateY(-2px);
 }
 
-.guessr-stage.is-result .guessr-map-dock {
+.guessr-map-action {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.guessr-map-action .guessr-btn {
+  width: 100%;
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.guessr-stage.is-result .guessr-map-stack {
   left: 1rem;
   right: 1rem;
   top: 1rem;
   bottom: 1rem;
-  width: auto;
-  height: auto;
+  grid-template-rows: 1fr auto;
+}
+
+.guessr-stage.is-result .guessr-map-dock {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
   transform: none;
+}
+
+.guessr-stage.is-result .guessr-map-action {
+  position: relative;
+  z-index: 900;
+}
+
+.guessr-map-action .guessr-btn[hidden] {
+  display: none !important;
 }
 
 .guessr-stage.is-result .guessr-bottom-hud {
@@ -560,14 +595,15 @@ body {
 
   .guessr-stage.is-result .guessr-photo-panel {
     right: 0.7rem;
-    bottom: 0.7rem;
+    top: auto;
+    bottom: calc(0.7rem + env(safe-area-inset-bottom, 0px) + 8.6rem);
     width: auto;
     height: auto;
   }
 
   .guessr-stage.is-result .guessr-photo-panel img {
-    max-width: min(46vw, 210px);
-    max-height: min(30vh, 190px);
+    max-width: min(40vw, 190px);
+    max-height: min(22vh, 150px);
   }
 
   .guessr-stage.is-result .guessr-photo-panel.is-expanded-photo img {
@@ -602,15 +638,22 @@ body {
     padding: 0.9rem;
   }
 
+  .guessr-map-stack {
+    right: 0.7rem;
+    bottom: 5.9rem;
+  }
+
   .guessr-map-dock,
   .guessr-map-dock:hover,
   .guessr-map-dock:focus-within,
   .guessr-map-dock.is-expanded {
-    right: 0.7rem;
-    bottom: 5.9rem;
     width: min(320px, calc(100vw - 1.4rem));
     height: 220px;
     transform: none;
+  }
+
+  .guessr-stage.is-mobile-map-focused .guessr-map-stack {
+    bottom: 5.9rem;
   }
 
   .guessr-stage.is-mobile-map-focused .guessr-map-dock,
@@ -619,7 +662,6 @@ body {
   .guessr-stage.is-mobile-map-focused .guessr-map-dock.is-expanded {
     width: calc(100vw - 1.4rem);
     height: min(58vh, 430px);
-    bottom: 5.9rem;
   }
 
   .guessr-stage.is-mobile-map-focused .guessr-photo-panel {
@@ -627,16 +669,36 @@ body {
     padding-top: 0.7rem;
   }
 
-  .guessr-stage.is-result .guessr-map-dock,
-  .guessr-stage.is-result .guessr-map-dock:hover,
-  .guessr-stage.is-result .guessr-map-dock:focus-within,
-  .guessr-stage.is-result .guessr-map-dock.is-expanded {
+  .guessr-stage.is-result .guessr-map-stack {
     left: 0.7rem;
     right: 0.7rem;
     top: 0.7rem;
     bottom: 0.7rem;
-    width: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .guessr-stage.is-result .guessr-map-dock,
+  .guessr-stage.is-result .guessr-map-dock:hover,
+  .guessr-stage.is-result .guessr-map-dock:focus-within,
+  .guessr-stage.is-result .guessr-map-dock.is-expanded {
+    position: relative;
+    width: 100%;
     height: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    transform: none;
+  }
+
+  .guessr-stage.is-result .guessr-map-action {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    transform: none;
+    z-index: 900;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .guessr-stage.is-result .guessr-bottom-hud {
@@ -669,12 +731,19 @@ body {
     font-size: 0.9rem;
   }
 
+  .guessr-map-stack {
+    bottom: 6.1rem;
+  }
+
   .guessr-map-dock,
   .guessr-map-dock:hover,
   .guessr-map-dock:focus-within,
   .guessr-map-dock.is-expanded {
     width: min(300px, calc(100vw - 1.4rem));
     height: 200px;
+  }
+
+  .guessr-stage.is-mobile-map-focused .guessr-map-stack {
     bottom: 6.1rem;
   }
 
@@ -684,7 +753,6 @@ body {
   .guessr-stage.is-mobile-map-focused .guessr-map-dock.is-expanded {
     width: calc(100vw - 1.4rem);
     height: min(56vh, 390px);
-    bottom: 6.1rem;
   }
 
   .guessr-stage.is-mobile-map-focused .guessr-photo-panel {
@@ -695,11 +763,13 @@ body {
   .guessr-stage.is-result .guessr-photo-panel {
     width: auto;
     height: auto;
+    top: auto;
+    bottom: calc(0.7rem + env(safe-area-inset-bottom, 0px) + 8.4rem);
   }
 
   .guessr-stage.is-result .guessr-photo-panel img {
-    max-width: min(54vw, 180px);
-    max-height: min(26vh, 155px);
+    max-width: min(44vw, 160px);
+    max-height: min(20vh, 130px);
   }
 
   .guessr-stage.is-result .guessr-photo-panel.is-expanded-photo img {
