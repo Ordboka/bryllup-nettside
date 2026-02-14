@@ -23,7 +23,6 @@ const translations = {
     welcome_title: "Welcome 🏔️",
     welcome_body:
       "We are delighted to invite you to our wedding in Beitostølen, where Sandra grew up! On this page, we have gathered useful information for the weekend. If there is anything else, just get in touch with one of us.",
-    stay_eyebrow: "Stay Nearby 🛌",
     stay_title: "Where to stay 🛌",
     stay_intro:
       "We have not reserved any accommodation, but here are our suggested places to stay.",
@@ -35,7 +34,6 @@ const translations = {
     stay_cabin_note: "Explore local cabins in the area.",
     stay_beito_resort: "Beito Resort Hotel",
     stay_link: "Visit website",
-    travel_eyebrow: "Travel 🚗",
     travel_title: "How to get there 🚗",
     travel_lead: "Choose the option that fits your trip.",
     travel_drive_title: "Drive 🚙",
@@ -53,20 +51,16 @@ const translations = {
     dress_value: "Dark suit · long dress",
     rsvp_title: "RSVP ✉️",
     rsvp_body: "Please let one of us know if you can make it, by the 1st of July.",
-    gift_eyebrow: "Gift list 🎁",
     gift_title: "Gift list 🎁",
     gift_body:
       "This is a work in progress, and we will update this section closer to the event. However, we do not expect our guests to bring a gift as we think celebrating this weekend with us is a gift enough!",
-    schedule_eyebrow: "Schedule 📅",
     schedule_title: "Weekend of events 📅",
     fri_label: "Friday",
     fri_event: "Optional get-together",
     sat_label: "Saturday",
     sat_ceremony: "Ceremony",
     sat_dinner: "Dinner",
-    gallery_eyebrow: "Gallery 📸",
     gallery_title: "Gallery 📸",
-    gallery_guess_prompt: "Do you know where we are in the photos?",
     gallery_guess_button: "SandraOgBenjaminGuessr",
     footer_line: "We can’t wait to celebrate with you."
   },
@@ -94,7 +88,6 @@ const translations = {
     welcome_title: "Velkommen 🏔️",
     welcome_body:
       "Vi har gleden av å invitere deg til bryllupet vårt på Beitostølen der Sandra vokste opp! På denne siden har vi samlet nyttig informasjon for helgen. Om det skulle være noe annet er det bare å ta kontakt med en av oss",
-    stay_eyebrow: "Overnatting 🛌",
     stay_title: "Hvor kan du bo 🛌",
     stay_intro:
       "Vi har ikke reservert overnatting, men her er våre forslag til steder å bo.",
@@ -106,7 +99,6 @@ const translations = {
     stay_cabin_note: "Se etter lokale hytter i området.",
     stay_beito_resort: "Beito Resort Hotel",
     stay_link: "Besøk nettsiden",
-    travel_eyebrow: "Reise 🚗",
     travel_title: "Slik kommer du deg dit 🚗",
     travel_lead: "Velg alternativet som passer reisen din.",
     travel_drive_title: "Kjør 🚙",
@@ -124,20 +116,16 @@ const translations = {
     dress_value: "Mørk dress · lang kjole",
     rsvp_title: "Svar innen ✉️",
     rsvp_body: "Gi en av oss beskjed om du kan komme innen 1. juli.",
-    gift_eyebrow: "Gaveliste 🎁",
     gift_title: "Gaveliste 🎁",
     gift_body:
       "Gavelisten er under arbeid, og vi oppdaterer denne delen nærmere bryllupet. Vi forventer ikke at gjestene våre tar med gave, for vi synes det å feire denne helgen med oss er gave nok!",
-    schedule_eyebrow: "Program 📅",
     schedule_title: "Helgens program 📅",
     fri_label: "Fredag",
     fri_event: "Uformell samling",
     sat_label: "Lørdag",
     sat_ceremony: "Vielse",
     sat_dinner: "Middag",
-    gallery_eyebrow: "Galleri 📸",
     gallery_title: "Galleri 📸",
-    gallery_guess_prompt: "Vet du hvor vi er på bildene?",
     gallery_guess_button: "SandraOgBenjaminGuessr",
     footer_line: "Vi gleder oss til å feire med dere."
   }

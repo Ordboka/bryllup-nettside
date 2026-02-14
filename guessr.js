@@ -11,8 +11,6 @@ const photoControls = document.querySelector("#photoControls");
 const translations = {
   en: {
     page_title: "SandraOgBenjaminGuessr",
-    back_to_gallery: "← Back to gallery",
-    tagline: "Guess where each photo was taken.",
     button_guess: "Guess",
     button_place_guess: "Click map to place guess",
     button_next_round: "Next round",
@@ -46,7 +44,6 @@ const translations = {
     tooltip_guess: "Your guess",
     tooltip_answer: "Answer",
     summary_copy_title: "SandraOgBenjaminGuessr Results",
-    summary_copy_round_label: "Round {round}",
     summary_copy_total: "Total",
     summary_copy_avg_distance: "Average distance",
     data_error_missing_data: "Missing photo location data. Check photo-locations.js.",
@@ -55,8 +52,6 @@ const translations = {
   },
   no: {
     page_title: "SandraOgBenjaminGuessr",
-    back_to_gallery: "← Tilbake til galleri",
-    tagline: "Gjett hvor hvert bilde ble tatt.",
     button_guess: "Gjett",
     button_place_guess: "Plasser hvor bildet er fra",
     button_next_round: "Neste runde",
@@ -90,7 +85,6 @@ const translations = {
     tooltip_guess: "Ditt gjett",
     tooltip_answer: "Svar",
     summary_copy_title: "SandraOgBenjaminGuessr Resultat",
-    summary_copy_round_label: "Runde {round}",
     summary_copy_total: "Totalt",
     summary_copy_avg_distance: "Gjennomsnittlig avstand",
     data_error_missing_data: "Mangler bildelokasjoner. Sjekk photo-locations.js.",
