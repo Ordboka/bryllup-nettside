@@ -652,8 +652,8 @@ body {
   .guessr-map-dock:hover,
   .guessr-map-dock:focus-within,
   .guessr-map-dock.is-expanded {
-    width: min(320px, calc(100vw - 1.4rem));
-    height: 220px;
+    width: min(240px, calc(100vw - 1.4rem));
+    height: 155px;
     transform: none;
   }
 
@@ -752,8 +752,8 @@ body {
   .guessr-map-dock:hover,
   .guessr-map-dock:focus-within,
   .guessr-map-dock.is-expanded {
-    width: min(300px, calc(100vw - 1.4rem));
-    height: 200px;
+    width: min(220px, calc(100vw - 1.4rem));
+    height: 140px;
   }
 
   .guessr-stage.is-mobile-map-focused .guessr-map-stack {
