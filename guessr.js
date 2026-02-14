@@ -57,7 +57,7 @@ const translations = {
     back_to_gallery: "← Tilbake til galleri",
     tagline: "Gjett hvor hvert bilde ble tatt.",
     button_guess: "Gjett",
-    button_place_guess: "Klikk kartet for å plassere gjett",
+    button_place_guess: "Plasser hvor bildet er fra",
     button_next_round: "Neste runde",
     button_view_total_results: "Se totalresultat",
     button_back_to_total_results: "Tilbake til totalresultat",
