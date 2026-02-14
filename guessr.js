@@ -159,6 +159,8 @@ let photoPinchStartZoom = PHOTO_ZOOM_MIN;
 let currentLang = "en";
 let mobileLayoutMediaQuery = null;
 let hasCopiedResults = false;
+let requestedStartPhotoSource = null;
+let pendingStartPhotoSource = null;
 
 const isNumber = (value) => typeof value === "number" && Number.isFinite(value);
 
@@ -176,6 +178,27 @@ const setStoredLanguage = (lang) => {
     localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
   } catch (_error) {
     // Ignore storage errors.
+  }
+};
+
+const normalizePhotoSource = (source) => {
+  if (typeof source !== "string") return "";
+  const trimmed = source.trim();
+  if (!trimmed) return "";
+  try {
+    return decodeURIComponent(trimmed);
+  } catch (_error) {
+    return trimmed;
+  }
+};
+
+const getRequestedStartPhotoSource = () => {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const value = params.get("start");
+    return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+  } catch (_error) {
+    return null;
   }
 };
 
@@ -614,6 +637,33 @@ const pickRandomPhoto = () => {
   return chosenPhoto || null;
 };
 
+const pickPhotoBySource = (source) => {
+  if (!source) return null;
+  if (!remainingPhotos.length) {
+    remainingPhotos = [...playablePhotos];
+  }
+  if (!remainingPhotos.length) return null;
+
+  const normalizedSource = normalizePhotoSource(source);
+  if (!normalizedSource) return null;
+
+  const chosenPhoto =
+    remainingPhotos.find((photo) => normalizePhotoSource(photo.src) === normalizedSource) || null;
+  if (!chosenPhoto) return null;
+
+  const removeIndex = remainingPhotos.findIndex((photo) => photo === chosenPhoto);
+  if (removeIndex >= 0) {
+    remainingPhotos.splice(removeIndex, 1);
+  }
+
+  if (typeof chosenPhoto.src === "string" && chosenPhoto.src.length > 0) {
+    seenPhotoSources.add(chosenPhoto.src);
+    saveSeenPhotoSources();
+  }
+
+  return chosenPhoto;
+};
+
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
 const getPhotoPanBounds = () => {
@@ -891,7 +941,15 @@ const startRound = () => {
   }
 
   clearRoundMarkers();
-  currentPhoto = pickRandomPhoto();
+  if (currentRoundNumber === 1 && pendingStartPhotoSource) {
+    currentPhoto = pickPhotoBySource(pendingStartPhotoSource);
+    pendingStartPhotoSource = null;
+  } else {
+    currentPhoto = null;
+  }
+  if (!currentPhoto) {
+    currentPhoto = pickRandomPhoto();
+  }
   if (!currentPhoto) {
     setDataError(t("data_error_no_photos"));
     return;
@@ -1040,6 +1098,7 @@ const restartGame = () => {
   remainingPhotos = [...playablePhotos];
   normalizeSeenPhotoSources(playablePhotos.map((photo) => photo.src));
   saveSeenPhotoSources();
+  pendingStartPhotoSource = requestedStartPhotoSource;
   startRound();
 };
 
@@ -1125,6 +1184,8 @@ const init = () => {
       return;
     }
 
+    requestedStartPhotoSource = getRequestedStartPhotoSource();
+    pendingStartPhotoSource = requestedStartPhotoSource;
     loadSeenPhotoSources(playablePhotos.map((photo) => photo.src));
     initMap();
     restartGame();

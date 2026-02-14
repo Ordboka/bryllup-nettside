@@ -223,6 +223,75 @@ if (galleryGrid) {
   }
   items.forEach((item) => galleryGrid.appendChild(item));
 
+  const getGuessrUrl = (photoSource) => {
+    const url = new URL("guessr.html", window.location.href);
+    url.searchParams.set("start", photoSource);
+    return url.toString();
+  };
+
+  const launchGuessrFromItem = (item) => {
+    const image = item.querySelector("img");
+    if (!image) return;
+    const source = image.getAttribute("src");
+    if (!source) return;
+    window.location.href = getGuessrUrl(source);
+  };
+
+  let activationPointerId = null;
+  let activationStartX = 0;
+  let activationStartY = 0;
+  let activationMoved = false;
+  let activationItem = null;
+
+  items.forEach((item) => {
+    item.classList.add("gallery__item--guessr");
+    item.tabIndex = 0;
+    item.setAttribute("role", "button");
+    item.setAttribute("aria-label", "Start SandraOgBenjaminGuessr with this photo");
+  });
+
+  galleryGrid.addEventListener("pointerdown", (event) => {
+    const target = event.target instanceof Element ? event.target.closest(".gallery__item") : null;
+    if (!target) return;
+    activationPointerId = event.pointerId;
+    activationStartX = event.clientX;
+    activationStartY = event.clientY;
+    activationMoved = false;
+    activationItem = target;
+  });
+
+  galleryGrid.addEventListener("pointermove", (event) => {
+    if (event.pointerId !== activationPointerId) return;
+    if (activationMoved) return;
+    if (Math.hypot(event.clientX - activationStartX, event.clientY - activationStartY) > 8) {
+      activationMoved = true;
+    }
+  });
+
+  galleryGrid.addEventListener("pointerup", (event) => {
+    if (event.pointerId !== activationPointerId) return;
+    if (!activationMoved && activationItem) {
+      launchGuessrFromItem(activationItem);
+    }
+    activationPointerId = null;
+    activationItem = null;
+  });
+
+  galleryGrid.addEventListener("pointercancel", (event) => {
+    if (event.pointerId !== activationPointerId) return;
+    activationPointerId = null;
+    activationMoved = true;
+    activationItem = null;
+  });
+
+  galleryGrid.addEventListener("keydown", (event) => {
+    const target = event.target instanceof Element ? event.target.closest(".gallery__item") : null;
+    if (!target) return;
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    launchGuessrFromItem(target);
+  });
+
   const isFinePointer = window.matchMedia("(pointer: fine)").matches;
   if (isFinePointer) {
     let isDragging = false;
