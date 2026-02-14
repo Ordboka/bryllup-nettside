@@ -31,6 +31,17 @@ window.PHOTO_LOCATIONS = {
     { src: "Pictures/Carousel/PXL_20250920_002338968.webp", label: "PXL_20250920_002338968", lat: 29.0535000, lng: 110.4812972 },
     { src: "Pictures/Carousel/PXL_20250922_070323568.webp", label: "PXL_20250922_070323568", lat: 32.0692806, lng: 118.7929917 },
     { src: "Pictures/Carousel/PXL_20250923_121951403.webp", label: "PXL_20250923_121951403", lat: 30.2445278, lng: 120.2123806 },
-    { src: "Pictures/Carousel/PXL_20250924_110823996.webp", label: "PXL_20250924_110823996", lat: 31.2424861, lng: 121.4865361 }
+    { src: "Pictures/Carousel/PXL_20250924_110823996.webp", label: "PXL_20250924_110823996", lat: 31.2424861, lng: 121.4865361 },
+    { src: "Pictures/Carousel/20210207_135614.webp", label: "20210207_135614", lat: null, lng: null },
+    { src: "Pictures/Carousel/20210517_105600.webp", label: "20210517_105600", lat: null, lng: null },
+    { src: "Pictures/Carousel/20220604_134650.webp", label: "20220604_134650", lat: null, lng: null },
+    { src: "Pictures/Carousel/20220626_164937.webp", label: "20220626_164937", lat: null, lng: null },
+    { src: "Pictures/Carousel/IMG_0135.webp", label: "IMG_0135", lat: null, lng: null },
+    { src: "Pictures/Carousel/IMG_0382.webp", label: "IMG_0382", lat: null, lng: null },
+    { src: "Pictures/Carousel/IMG_1062.webp", label: "IMG_1062", lat: null, lng: null },
+    { src: "Pictures/Carousel/IMG_1091.webp", label: "IMG_1091", lat: null, lng: null },
+    { src: "Pictures/Carousel/IMG_1107.webp", label: "IMG_1107", lat: null, lng: null },
+    { src: "Pictures/Carousel/IMG_1139.webp", label: "IMG_1139", lat: null, lng: null },
+    { src: "Pictures/Carousel/IMG_2106.webp", label: "IMG_2106", lat: null, lng: null }
   ]
 };
