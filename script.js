@@ -61,6 +61,8 @@ const translations = {
     sat_ceremony: "Ceremony",
     sat_dinner: "Dinner",
     gallery_title: "Gallery 📸",
+    gallery_photo_alt: "Gallery photo of Sandra and Benjamin",
+    gallery_item_aria: "Start SandraOgBenjaminGuessr with photo {label}",
     gallery_guess_button: "SandraOgBenjaminGuessr",
     footer_line: "We can’t wait to celebrate with you."
   },
@@ -126,6 +128,8 @@ const translations = {
     sat_ceremony: "Vielse",
     sat_dinner: "Middag",
     gallery_title: "Galleri 📸",
+    gallery_photo_alt: "Galleribilde av Sandra og Benjamin",
+    gallery_item_aria: "Start SandraOgBenjaminGuessr med bildet {label}",
     gallery_guess_button: "SandraOgBenjaminGuessr",
     footer_line: "Vi gleder oss til å feire med dere."
   }
@@ -137,6 +141,30 @@ const siteHeader = document.querySelector(".site-header");
 const navToggle = document.querySelector(".nav-toggle");
 const navLinks = document.querySelectorAll(".site-nav a");
 const LANGUAGE_STORAGE_KEY = "wedding_lang";
+let activeLanguage = "en";
+
+const interpolate = (template, values = {}) =>
+  template.replace(/\{(\w+)\}/g, (_match, key) =>
+    values[key] !== undefined ? String(values[key]) : ""
+  );
+
+const t = (lang, key, values = {}) => {
+  const dictionary = translations[lang] || translations.en;
+  const fallback = translations.en[key] || key;
+  return interpolate(dictionary[key] || fallback, values);
+};
+
+const updateGalleryItemLabels = (lang) => {
+  const galleryItems = document.querySelectorAll(".gallery__item");
+  galleryItems.forEach((item) => {
+    const image = item.querySelector("img");
+    const photoLabel = item.getAttribute("data-photo-label") || (image ? image.alt : "") || "";
+    item.setAttribute("aria-label", t(lang, "gallery_item_aria", { label: photoLabel || "photo" }));
+    if (image) {
+      image.alt = t(lang, "gallery_photo_alt");
+    }
+  });
+};
 
 const getStoredLanguage = () => {
   try {
@@ -158,6 +186,7 @@ const setStoredLanguage = (lang) => {
 const setLanguage = (lang) => {
   const dict = translations[lang];
   if (!dict) return;
+  activeLanguage = lang;
   translatable.forEach((el) => {
     const key = el.getAttribute("data-i18n");
     if (dict[key]) el.textContent = dict[key];
@@ -166,6 +195,7 @@ const setLanguage = (lang) => {
   switchButtons.forEach((btn) =>
     btn.classList.toggle("is-active", btn.dataset.lang === lang)
   );
+  updateGalleryItemLabels(lang);
   setStoredLanguage(lang);
 };
 
@@ -203,11 +233,32 @@ if (siteHeader && navToggle) {
 
 const galleryGrid = document.querySelector(".gallery__grid");
 if (galleryGrid) {
+  const photoData = window.PHOTO_LOCATIONS;
+  const photoList = photoData && Array.isArray(photoData.photos) ? photoData.photos : [];
+
+  if (photoList.length) {
+    const fragment = document.createDocumentFragment();
+    photoList.forEach((photo) => {
+      if (!photo || typeof photo.src !== "string" || photo.src.trim().length === 0) return;
+      const figure = document.createElement("figure");
+      figure.className = "gallery__item";
+      figure.setAttribute("data-photo-label", typeof photo.label === "string" ? photo.label : "");
+      const image = document.createElement("img");
+      image.src = photo.src;
+      image.loading = "lazy";
+      image.decoding = "async";
+      image.alt = t(activeLanguage, "gallery_photo_alt");
+      image.sizes = "(max-width: 480px) 200px, (max-width: 700px) 220px, 260px";
+      figure.appendChild(image);
+      fragment.appendChild(figure);
+    });
+    galleryGrid.replaceChildren(fragment);
+  }
+
   const items = Array.from(galleryGrid.children);
   for (let i = items.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
-    galleryGrid.appendChild(items[j]);
-    items.splice(j, 1);
+    [items[i], items[j]] = [items[j], items[i]];
   }
   items.forEach((item) => galleryGrid.appendChild(item));
 
@@ -235,8 +286,8 @@ if (galleryGrid) {
     item.classList.add("gallery__item--guessr");
     item.tabIndex = 0;
     item.setAttribute("role", "button");
-    item.setAttribute("aria-label", "Start SandraOgBenjaminGuessr with this photo");
   });
+  updateGalleryItemLabels(activeLanguage);
 
   galleryGrid.addEventListener("pointerdown", (event) => {
     const target = event.target instanceof Element ? event.target.closest(".gallery__item") : null;

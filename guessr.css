@@ -94,7 +94,6 @@ body {
   background: #1c2220;
 }
 
-.guessr-stage.is-summary .guessr-bottom-hud,
 .guessr-stage.is-summary .guessr-top-hud,
 .guessr-stage.is-summary .guessr-result-summary,
 .guessr-stage.is-summary .guessr-map-stack,
@@ -311,18 +310,6 @@ body {
   opacity: 1;
 }
 
-.guessr-bottom-hud {
-  position: absolute;
-  left: 1rem;
-  right: 19rem;
-  bottom: 1rem;
-  z-index: 450;
-  border-radius: 14px;
-  padding: 0.8rem 0.85rem;
-  display: grid;
-  gap: 0.6rem;
-}
-
 .guessr-total-results {
   position: absolute;
   top: 50%;
@@ -452,13 +439,6 @@ body {
   display: none !important;
 }
 
-.guessr-stage.is-result .guessr-bottom-hud {
-  left: 1rem;
-  right: 1rem;
-  bottom: 1rem;
-  z-index: 650;
-}
-
 .guessr-stage.is-result .guessr-top-hud {
   z-index: 650;
 }
@@ -530,15 +510,15 @@ body {
 }
 
 .guessr-status {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 680;
   margin: 0;
-  min-height: 1.4rem;
   color: #f2eae1;
-}
-
-.guessr-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
+  border-radius: 10px;
+  padding: 0.45rem 0.65rem;
+  max-width: min(78vw, 620px);
 }
 
 .guessr-btn {
@@ -554,10 +534,6 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-
-.guessr-actions .guessr-btn[hidden] {
-  display: none !important;
 }
 
 .guessr-btn--secondary {
@@ -631,13 +607,6 @@ body {
     padding: 0.45rem 0.7rem;
   }
 
-  .guessr-bottom-hud {
-    left: 0.7rem;
-    right: 0.7rem;
-    bottom: 0.7rem;
-    padding: 0.7rem;
-  }
-
   .guessr-total-results {
     width: calc(100% - 1.4rem);
     padding: 0.9rem;
@@ -706,11 +675,6 @@ body {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  .guessr-stage.is-result .guessr-bottom-hud {
-    left: 0.7rem;
-    right: 0.7rem;
-    bottom: 0.7rem;
-  }
 }
 
 @media (max-width: 680px) {
@@ -741,6 +705,9 @@ body {
   }
 
   .guessr-status {
+    left: 0.7rem;
+    bottom: 0.7rem;
+    max-width: calc(100vw - 1.4rem);
     font-size: 0.9rem;
   }
 
@@ -788,5 +755,17 @@ body {
   .guessr-stage.is-result .guessr-photo-panel.is-expanded-photo img {
     max-width: min(94vw, 540px);
     max-height: min(70vh, 500px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .guessr-confetti-piece {
+    display: none !important;
   }
 }

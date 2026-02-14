@@ -328,7 +328,7 @@ span {
 .stay-card__image--cabin {
   background-image:
     linear-gradient(180deg, rgba(47, 43, 40, 0.08), rgba(47, 43, 40, 0.45)),
-    url('https://images.unsplash.com/photo-1716847214602-d6a7c4cebc85?auto=format&fit=crop&fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.1.0&q=80&w=1600');
+    linear-gradient(135deg, rgba(108, 122, 85, 0.85), rgba(61, 77, 61, 0.9));
 }
 
 .stay-card__image--beito {
@@ -434,35 +434,6 @@ summary:focus-visible {
 .travel__note {
   color: var(--stone);
   font-size: 0.9rem;
-}
-
-.dresscode {
-  display: grid;
-  gap: 1.2rem;
-}
-
-.dresscode__card {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 20px;
-  padding: 1.5rem;
-  border: 1px solid rgba(47, 43, 40, 0.08);
-  display: grid;
-  gap: 0.4rem;
-  max-width: 520px;
-  box-shadow: 0 14px 28px rgba(47, 43, 40, 0.08);
-}
-
-.dresscode__label {
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.75rem;
-  color: var(--stone);
-}
-
-.dresscode__value {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.6rem;
-  color: var(--pine);
 }
 
 .section__header {
@@ -582,6 +553,15 @@ footer {
   background: var(--sand);
   color: var(--pine);
   font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @media (max-width: 700px) {
