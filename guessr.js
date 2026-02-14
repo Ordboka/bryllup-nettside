@@ -13,6 +13,7 @@ const translations = {
     back_to_gallery: "← Back to gallery",
     tagline: "Guess where each photo was taken.",
     button_guess: "Guess",
+    button_place_guess: "Click map to place guess",
     button_next_round: "Next round",
     button_view_total_results: "View total results",
     button_back_to_total_results: "Back to total results",
@@ -56,6 +57,7 @@ const translations = {
     back_to_gallery: "← Tilbake til galleri",
     tagline: "Gjett hvor hvert bilde ble tatt.",
     button_guess: "Gjett",
+    button_place_guess: "Klikk kartet for å plassere gjett",
     button_next_round: "Neste runde",
     button_view_total_results: "Se totalresultat",
     button_back_to_total_results: "Tilbake til totalresultat",
@@ -183,6 +185,21 @@ const t = (key, values = {}) => {
   return interpolate(message, values);
 };
 
+const setStatusMessage = (message) => {
+  if (!statusText) return;
+  statusText.textContent = message;
+};
+
+const updateGuessButtonLabel = () => {
+  if (!guessButton) return;
+  if (mode !== "playing") {
+    guessButton.textContent = t("button_guess");
+    return;
+  }
+  const hasPlacedGuess = isNumber(guessLat) && isNumber(guessLng) && !guessButton.disabled;
+  guessButton.textContent = hasPlacedGuess ? t("button_guess") : t("button_place_guess");
+};
+
 const getNextButtonLabel = () => {
   if (mode === "review") return t("button_back_to_total_results");
   return currentRoundNumber < MAX_ROUNDS ? t("button_next_round") : t("button_view_total_results");
@@ -240,14 +257,10 @@ const refreshLocalizedUi = () => {
     nextButton.textContent = getNextButtonLabel();
   } else if (mode === "playing") {
     nextButton.textContent = getNextButtonLabel();
-    if (!guessButton.disabled && isNumber(guessLat) && isNumber(guessLng)) {
-      statusText.textContent = t("status_guess_placed");
-    } else {
-      statusText.textContent = t("status_place_guess");
-    }
+    updateGuessButtonLabel();
   } else if (mode === "summary") {
     nextButton.textContent = t("button_view_total_results");
-    statusText.textContent = t("status_game_finished");
+    setStatusMessage(t("status_game_finished"));
   }
 
   if (finalTotalScore && mode === "summary") {
@@ -444,6 +457,12 @@ const refreshMapSize = () => {
   window.requestAnimationFrame(() => map.invalidateSize());
 };
 
+const scheduleMapResize = () => {
+  setTimeout(refreshMapSize, 20);
+  setTimeout(refreshMapSize, 260);
+  setTimeout(refreshMapSize, 700);
+};
+
 const isMobileLayout = () => Boolean(mobileLayoutMediaQuery && mobileLayoutMediaQuery.matches);
 
 const setMobileMapFocus = (isFocused) => {
@@ -456,8 +475,7 @@ const setMobileMapFocus = (isFocused) => {
 
   guessrStage.classList.toggle("is-mobile-map-focused", isFocused);
   mapDock.classList.toggle("is-expanded", isFocused);
-  setTimeout(refreshMapSize, 20);
-  setTimeout(refreshMapSize, 260);
+  scheduleMapResize();
 };
 
 const clearRoundMarkers = () => {
@@ -640,7 +658,7 @@ const syncResultPhotoPanelOrientation = () => {
 };
 
 const setDataError = (message) => {
-  statusText.textContent = message;
+  setStatusMessage(message);
   guessButton.disabled = true;
   nextButton.disabled = true;
   updateActionButtons();
@@ -665,9 +683,9 @@ const updateActionButtons = () => {
   }
 
   if (mode === "playing") {
-    const canSubmitGuess = isNumber(guessLat) && isNumber(guessLng) && !guessButton.disabled;
-    guessButton.hidden = !canSubmitGuess;
+    guessButton.hidden = false;
     nextButton.hidden = true;
+    updateGuessButtonLabel();
     return;
   }
 
@@ -679,6 +697,7 @@ const updateActionButtons = () => {
 
   guessButton.hidden = true;
   nextButton.hidden = true;
+  updateGuessButtonLabel();
 };
 
 const clearStageModes = () => {
@@ -730,7 +749,7 @@ const showTotalResults = () => {
     });
   }
 
-  statusText.textContent = t("status_game_finished");
+  setStatusMessage(t("status_game_finished"));
   guessButton.disabled = true;
   nextButton.disabled = true;
   updateActionButtons();
@@ -777,15 +796,14 @@ const showRoundReview = (index) => {
 
   currentRoundNumber = result.round;
   updateHud();
-  statusText.textContent = t("status_reviewing_round", { round: result.round });
+  setStatusMessage(t("status_reviewing_round", { round: result.round }));
 
   guessButton.disabled = true;
   nextButton.disabled = false;
   nextButton.textContent = t("button_back_to_total_results");
   updateActionButtons();
 
-  setTimeout(refreshMapSize, 20);
-  setTimeout(refreshMapSize, 260);
+  scheduleMapResize();
 };
 
 const startRound = () => {
@@ -813,7 +831,7 @@ const startRound = () => {
     resultSummary.textContent = "";
   }
 
-  statusText.textContent = t("status_place_guess");
+  setStatusMessage(t("status_place_guess"));
   guessButton.disabled = true;
   nextButton.disabled = true;
   nextButton.textContent = getNextButtonLabel();
@@ -821,7 +839,7 @@ const startRound = () => {
   updateActionButtons();
 
   map.setView([20, 0], 2);
-  setTimeout(refreshMapSize, 20);
+  scheduleMapResize();
 };
 
 const placeGuess = (lat, lng) => {
@@ -836,7 +854,7 @@ const placeGuess = (lat, lng) => {
     guessMapMarker = createGuessMarker([lat, lng]).addTo(map);
   }
 
-  statusText.textContent = t("status_guess_placed");
+  setStatusMessage(t("status_guess_placed"));
   guessButton.disabled = false;
   updateActionButtons();
 };
@@ -891,10 +909,10 @@ const submitGuess = () => {
       distance: formatDistance(distanceKm)
     });
   }
-  statusText.textContent = t("status_you_were_away", {
+  setStatusMessage(t("status_you_were_away", {
     distance: formatDistance(distanceKm),
     score: roundScore
-  });
+  }));
 
   if (roundScore === SCORE_MAX) {
     launchPerfectScoreConfetti();
@@ -913,8 +931,7 @@ const submitGuess = () => {
   }
   updateActionButtons();
 
-  setTimeout(refreshMapSize, 20);
-  setTimeout(refreshMapSize, 300);
+  scheduleMapResize();
 };
 
 const handleNextButton = () => {
@@ -1048,7 +1065,7 @@ if (copyResultsButton) {
     const copied = await copyTextToClipboard(text);
     hasCopiedResults = copied;
     updateCopyResultsButtonState();
-    statusText.textContent = copied ? t("status_results_copied") : t("status_results_copy_failed");
+    setStatusMessage(copied ? t("status_results_copied") : t("status_results_copy_failed"));
   });
 }
 window.addEventListener("keydown", (event) => {

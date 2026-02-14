@@ -43,17 +43,15 @@
 
         <p id="resultSummary" class="guessr-result-summary guessr-glass" aria-live="polite"></p>
 
-        <div class="guessr-bottom-hud guessr-glass">
-          <p id="statusText" class="guessr-status">Click on the map to place your guess.</p>
-          <div class="guessr-actions">
+        <div class="guessr-map-stack">
+          <section id="mapDock" class="guessr-map-dock guessr-glass" aria-label="World map for placing guess">
+            <div id="mapSurface" class="guessr-map"></div>
+          </section>
+          <div class="guessr-map-action">
             <button id="guessButton" type="button" class="guessr-btn" data-i18n="button_guess">Guess</button>
-            <button id="nextButton" type="button" class="guessr-btn guessr-btn--secondary" disabled data-i18n="button_next_round">Next round</button>
+            <button id="nextButton" type="button" class="guessr-btn guessr-btn--secondary guessr-btn--next" disabled data-i18n="button_next_round">Next round</button>
           </div>
         </div>
-
-        <section id="mapDock" class="guessr-map-dock guessr-glass" aria-label="World map for placing guess">
-          <div id="mapSurface" class="guessr-map"></div>
-        </section>
 
         <section id="totalResultsPanel" class="guessr-total-results guessr-glass" hidden>
           <h2 data-i18n="summary_title">Your Total Score</h2>
