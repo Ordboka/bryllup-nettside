@@ -669,7 +669,7 @@ body {
     height: min(58vh, 430px);
   }
 
-  .guessr-stage.is-mobile-map-focused .guessr-photo-panel {
+  .guessr-photo-panel {
     align-items: flex-start;
     padding-top: 0.7rem;
   }
@@ -768,7 +768,7 @@ body {
     height: min(56vh, 390px);
   }
 
-  .guessr-stage.is-mobile-map-focused .guessr-photo-panel {
+  .guessr-photo-panel {
     align-items: flex-start;
     padding-top: 0.65rem;
   }
