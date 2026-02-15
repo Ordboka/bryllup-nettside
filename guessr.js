@@ -497,9 +497,9 @@ const launchPerfectScoreConfetti = () => {
     piece.style.left = `${Math.random() * 100}%`;
     piece.style.setProperty("--confetti-color", colors[index % colors.length]);
     piece.style.setProperty("--confetti-rotate", `${Math.random() * 360}deg`);
-    piece.style.setProperty("--confetti-drift", `${(Math.random() - 0.5) * 180}px`);
+    piece.style.setProperty("--confetti-drift", `${(Math.random() - 0.5) * 260}px`);
     piece.style.animationDelay = `${Math.random() * 120}ms`;
-    piece.style.animationDuration = `${1150 + Math.random() * 700}ms`;
+    piece.style.animationDuration = `${1350 + Math.random() * 850}ms`;
     layer.appendChild(piece);
     window.setTimeout(() => piece.remove(), 2100);
   }

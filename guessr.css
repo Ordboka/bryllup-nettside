@@ -129,8 +129,8 @@ body {
 .guessr-confetti-piece {
   position: absolute;
   top: -12px;
-  width: 10px;
-  height: 14px;
+  width: 12px;
+  height: 17px;
   border-radius: 2px;
   background: var(--confetti-color, #f4efe3);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22);
