@@ -2,7 +2,7 @@ const translations = {
   en: {
     page_title: "Sandra & Benjamin's wedding",
     names: "Sandra & Benjamin",
-    invite_line: "invites you to our wedding",
+    invite_line: "invite you to our wedding",
     date_label: "Date",
     date_value: "Saturday, September 19, 2026",
     location_label: "Location",
