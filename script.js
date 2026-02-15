@@ -75,14 +75,14 @@ const translations = {
     location_label: "Sted",
     location_value: "Beitostølen, Norge",
     cta_info: "Informasjon",
-    cta_stay: "Hvor kan du bo",
+    cta_stay: "Forslag til overnatting",
     cta_travel: "Reise",
     cta_schedule: "Se programmet",
     cta_gifts: "Gaveliste",
     cta_gallery: "Galleri",
     nav_info: "Informasjon",
     nav_gifts: "Gaveliste",
-    nav_stay: "Hvor kan du bo",
+    nav_stay: "Forslag til overnatting",
     nav_travel: "Reise",
     nav_schedule: "Program",
     nav_gallery: "Galleri",
@@ -90,7 +90,7 @@ const translations = {
     welcome_title: "Velkommen 🏔️",
     welcome_body:
       "Vi har gleden av å invitere deg til bryllupet vårt på Beitostølen der Sandra vokste opp! På denne siden har vi samlet nyttig informasjon for helgen. Om det skulle være noe annet er det bare å ta kontakt med en av oss",
-    stay_title: "Hvor kan du bo 🛌",
+    stay_title: "Forslag til overnatting 🛌",
     stay_intro:
       "Vi har ikke reservert overnatting, men her er våre forslag til steder å bo.",
     stay_walkable:
