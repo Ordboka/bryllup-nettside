@@ -56,7 +56,9 @@ const translations = {
       "This is a work in progress, and we will update this section closer to the event. However, we do not expect our guests to bring a gift as we think celebrating this weekend with us is a gift enough!",
     schedule_title: "Weekend of events 📅",
     fri_label: "Friday",
-    fri_event: "Optional get-together",
+    fri_optional_badge: "Optional",
+    fri_event:
+      "Informal optional gathering for anyone that arrives on Friday. No food will be served, just good vibes",
     sat_label: "Saturday",
     sat_ceremony: "Ceremony",
     sat_dinner: "Dinner",
@@ -123,7 +125,9 @@ const translations = {
       "Gavelisten er under arbeid, og vi oppdaterer denne delen nærmere bryllupet. Vi forventer ikke at gjestene våre tar med gave, for vi synes det å feire denne helgen med oss er gave nok!",
     schedule_title: "Helgens program 📅",
     fri_label: "Fredag",
-    fri_event: "Uformell samling",
+    fri_optional_badge: "Valgfritt",
+    fri_event:
+      "Uformell valgfri samling for de som kommer på fredag. Det blir ikke servert mat, bare god stemning.",
     sat_label: "Lørdag",
     sat_ceremony: "Vielse",
     sat_dinner: "Middag",
