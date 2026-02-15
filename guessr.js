@@ -260,9 +260,15 @@ const updateGuessButtonLabel = () => {
 };
 
 const getPhotoInfoText = (photo) => {
-  if (photo && typeof photo.info === "string" && photo.info.trim().length > 0) {
-    return photo.info.trim();
+  if (!photo || typeof photo !== "object") {
+    return "Placeholder information about this photo.";
   }
+  const localizedInfo = currentLang === "en" ? photo.info_en : photo.info;
+  if (typeof localizedInfo === "string" && localizedInfo.trim().length > 0) {
+    return localizedInfo.trim();
+  }
+  if (typeof photo.info === "string" && photo.info.trim().length > 0) return photo.info.trim();
+  if (typeof photo.info_en === "string" && photo.info_en.trim().length > 0) return photo.info_en.trim();
   return "Placeholder information about this photo.";
 };
 
