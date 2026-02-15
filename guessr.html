@@ -42,6 +42,18 @@
 
         <p id="resultSummary" class="guessr-result-summary guessr-glass" aria-live="polite"></p>
         <p id="statusText" class="guessr-status guessr-glass" aria-live="polite"></p>
+        <div id="photoInfoBox" class="guessr-photo-info guessr-glass" hidden>
+          <button
+            id="photoInfoToggle"
+            type="button"
+            class="guessr-photo-info__toggle"
+            aria-label="Photo information"
+            aria-expanded="false"
+          >
+            i
+          </button>
+          <p id="photoInfoContent" class="guessr-photo-info__content"></p>
+        </div>
 
         <div class="guessr-map-stack">
           <section id="mapDock" class="guessr-map-dock guessr-glass" aria-label="World map for placing guess">

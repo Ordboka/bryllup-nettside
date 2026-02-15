@@ -41,6 +41,7 @@ const translations = {
     zoom_out: "Zoom out",
     zoom_reset: "Reset zoom",
     zoom_in: "Zoom in",
+    photo_info_toggle: "Photo information",
     tooltip_guess: "Your guess",
     tooltip_answer: "Answer",
     summary_copy_title: "SandraOgBenjaminGuessr Results",
@@ -82,6 +83,7 @@ const translations = {
     zoom_out: "Zoom ut",
     zoom_reset: "Tilbakestill zoom",
     zoom_in: "Zoom inn",
+    photo_info_toggle: "Bildeinformasjon",
     tooltip_guess: "Ditt gjett",
     tooltip_answer: "Svar",
     summary_copy_title: "SandraOgBenjaminGuessr Resultat",
@@ -113,6 +115,9 @@ const copyResultsButton = document.querySelector("#copyResultsButton");
 const photoZoomOutButton = document.querySelector("#photoZoomOutButton");
 const photoZoomResetButton = document.querySelector("#photoZoomResetButton");
 const photoZoomInButton = document.querySelector("#photoZoomInButton");
+const photoInfoBox = document.querySelector("#photoInfoBox");
+const photoInfoToggle = document.querySelector("#photoInfoToggle");
+const photoInfoContent = document.querySelector("#photoInfoContent");
 
 const PHOTO_ZOOM_MIN = 1;
 const PHOTO_ZOOM_MAX = 4;
@@ -155,6 +160,7 @@ let mobileLayoutMediaQuery = null;
 let hasCopiedResults = false;
 let requestedStartPhotoSource = null;
 let pendingStartPhotoSource = null;
+let isPhotoInfoOpen = false;
 
 const isNumber = (value) => typeof value === "number" && Number.isFinite(value);
 
@@ -253,6 +259,26 @@ const updateGuessButtonLabel = () => {
   guessButton.textContent = hasPlacedGuess ? t("button_guess") : t("button_place_guess");
 };
 
+const getPhotoInfoText = (photo) => {
+  if (photo && typeof photo.info === "string" && photo.info.trim().length > 0) {
+    return photo.info.trim();
+  }
+  return "Placeholder information about this photo.";
+};
+
+const syncPhotoInfo = () => {
+  if (!photoInfoBox || !photoInfoToggle || !photoInfoContent) return;
+  const isResultMode = mode === "result" || mode === "review";
+  photoInfoBox.hidden = !isResultMode;
+  if (!isResultMode) {
+    isPhotoInfoOpen = false;
+  }
+  photoInfoContent.textContent = getPhotoInfoText(currentPhoto);
+  const showInfoContent = isMobileLayout() ? isPhotoInfoOpen : true;
+  photoInfoBox.classList.toggle("is-open", showInfoContent);
+  photoInfoToggle.setAttribute("aria-expanded", showInfoContent ? "true" : "false");
+};
+
 const getNextButtonLabel = () => {
   if (mode === "review") return t("button_back_to_total_results");
   return currentRoundNumber < MAX_ROUNDS ? t("button_next_round") : t("button_view_total_results");
@@ -273,6 +299,7 @@ const applyStaticTranslations = () => {
   if (photoZoomOutButton) photoZoomOutButton.setAttribute("aria-label", t("zoom_out"));
   if (photoZoomResetButton) photoZoomResetButton.setAttribute("aria-label", t("zoom_reset"));
   if (photoZoomInButton) photoZoomInButton.setAttribute("aria-label", t("zoom_in"));
+  if (photoInfoToggle) photoInfoToggle.setAttribute("aria-label", t("photo_info_toggle"));
 };
 
 const updateCopyResultsButtonState = () => {
@@ -333,6 +360,7 @@ const refreshLocalizedUi = () => {
   }
   updateCopyResultsButtonState();
   updateActionButtons();
+  syncPhotoInfo();
 };
 
 const setLanguage = (lang) => {
@@ -836,6 +864,7 @@ const showTotalResults = () => {
     photoPanel.classList.remove("is-expanded-photo");
   }
   resetPhotoZoom();
+  syncPhotoInfo();
 
   if (totalResultsPanel) {
     totalResultsPanel.hidden = false;
@@ -895,6 +924,8 @@ const showRoundReview = (index) => {
   roundPhoto.src = result.photo.src;
   roundPhoto.alt = result.photo.label || t("photo_alt");
   resetPhotoZoom();
+  isPhotoInfoOpen = false;
+  syncPhotoInfo();
 
   clearRoundMarkers();
   const displayPoints = getDisplayPoints(result.guessLat, result.guessLng, result.answerLat, result.answerLng);
@@ -954,6 +985,7 @@ const startRound = () => {
     photoPanel.classList.remove("is-expanded-photo");
   }
   resetPhotoZoom();
+  syncPhotoInfo();
 
   guessLat = null;
   guessLng = null;
@@ -1002,6 +1034,8 @@ const submitGuess = () => {
   if (guessrStage) {
     guessrStage.classList.add("is-result");
   }
+  isPhotoInfoOpen = false;
+  syncPhotoInfo();
 
   const displayPoints = getDisplayPoints(guessLat, guessLng, currentPhoto.lat, currentPhoto.lng);
   if (guessMapMarker) {
@@ -1229,7 +1263,10 @@ if (photoPanel) {
     if (mode === "playing") {
       setMobileMapFocus(false);
     }
-    if (event.target instanceof HTMLElement && event.target.closest(".guessr-photo-zoom-btn")) return;
+    if (event.target instanceof HTMLElement && (
+      event.target.closest(".guessr-photo-zoom-btn") ||
+      event.target.closest(".guessr-photo-info")
+    )) return;
     if (event.pointerType === "touch") {
       photoTouchPoints.set(event.pointerId, { x: event.clientX, y: event.clientY });
       syncPhotoTouchManipulationClass();
@@ -1377,7 +1414,10 @@ if (photoPanel) {
 
   photoPanel.addEventListener("click", (event) => {
     if (mode !== "result" && mode !== "review") return;
-    if (event.target instanceof HTMLElement && event.target.closest(".guessr-photo-zoom-btn")) return;
+    if (event.target instanceof HTMLElement && (
+      event.target.closest(".guessr-photo-zoom-btn") ||
+      event.target.closest(".guessr-photo-info")
+    )) return;
     if (photoDragMoved) {
       photoDragMoved = false;
       return;
@@ -1399,6 +1439,15 @@ if (photoZoomInButton) {
   photoZoomInButton.addEventListener("click", () => setPhotoZoom(photoZoom + PHOTO_ZOOM_STEP));
 }
 
+if (photoInfoToggle) {
+  photoInfoToggle.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    isPhotoInfoOpen = !isPhotoInfoOpen;
+    syncPhotoInfo();
+  });
+}
+
 window.addEventListener("resize", () => {
   setPhotoPan(photoPanX, photoPanY);
 });
@@ -1407,7 +1456,10 @@ const browserLang = (navigator.language || "").toLowerCase();
 const isNorwegian = browserLang.startsWith("no") || browserLang.startsWith("nb") || browserLang.startsWith("nn");
 mobileLayoutMediaQuery = window.matchMedia(MOBILE_LAYOUT_QUERY);
 if (mobileLayoutMediaQuery && typeof mobileLayoutMediaQuery.addEventListener === "function") {
-  mobileLayoutMediaQuery.addEventListener("change", () => setMobileMapFocus(false));
+  mobileLayoutMediaQuery.addEventListener("change", () => {
+    setMobileMapFocus(false);
+    syncPhotoInfo();
+  });
 }
 setLanguage(getStoredLanguage() || (isNorwegian ? "no" : "en"));
 
