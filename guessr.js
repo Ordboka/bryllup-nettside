@@ -1000,7 +1000,7 @@ const startRound = () => {
     resultSummary.textContent = "";
   }
 
-  setStatusMessage(t("status_place_guess"));
+  setStatusMessage("");
   guessButton.disabled = true;
   nextButton.disabled = true;
   nextButton.textContent = getNextButtonLabel();
@@ -1023,7 +1023,7 @@ const placeGuess = (lat, lng) => {
     guessMapMarker = createGuessMarker([lat, lng]).addTo(map);
   }
 
-  setStatusMessage(t("status_guess_placed"));
+  setStatusMessage("");
   guessButton.disabled = false;
   updateActionButtons();
 };
