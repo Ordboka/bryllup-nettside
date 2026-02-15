@@ -25,7 +25,6 @@ const translations = {
     hud_round: "Round: {current}/{max}",
     hud_round_review: "Round: {current}/{max} (Review)",
     hud_total: "Total: {score}",
-    summary_avg_distance: "Average distance: {distance}",
     round_review_button: "Round {round}: {score} pts",
     result_points_distance: "Points: {score}/5000 · Distance: {distance}",
     status_place_guess: "Click on the map to place your guess.",
@@ -46,7 +45,6 @@ const translations = {
     tooltip_answer: "Answer",
     summary_copy_title: "SandraOgBenjaminGuessr Results",
     summary_copy_total: "Total",
-    summary_copy_avg_distance: "Average distance",
     data_error_missing_data: "Missing photo location data. Check photo-locations.js.",
     data_error_no_photos: "Add coordinates in photo-locations.js (numbers only, no quotes) to start playing.",
     data_error_init_fail: "Could not initialize the map. Check internet access and photo-locations.js."
@@ -67,7 +65,6 @@ const translations = {
     hud_round: "Runde: {current}/{max}",
     hud_round_review: "Runde: {current}/{max} (Gjennomgang)",
     hud_total: "Totalt: {score}",
-    summary_avg_distance: "Gjennomsnittlig avstand: {distance}",
     round_review_button: "Runde {round}: {score} poeng",
     result_points_distance: "Poeng: {score}/5000 · Avstand: {distance}",
     status_place_guess: "Klikk på kartet for å plassere gjetningen din.",
@@ -88,7 +85,6 @@ const translations = {
     tooltip_answer: "Svar",
     summary_copy_title: "SandraOgBenjaminGuessr Resultat",
     summary_copy_total: "Totalt",
-    summary_copy_avg_distance: "Gjennomsnittlig avstand",
     data_error_missing_data: "Mangler bildelokasjoner. Sjekk photo-locations.js.",
     data_error_no_photos: "Legg til koordinater i photo-locations.js (kun tall, uten anførselstegn) for å starte.",
     data_error_init_fail: "Kunne ikke initialisere kartet. Sjekk internettilgang og photo-locations.js."
@@ -108,7 +104,6 @@ const guessButton = document.querySelector("#guessButton");
 const nextButton = document.querySelector("#nextButton");
 const totalResultsPanel = document.querySelector("#totalResultsPanel");
 const finalTotalScore = document.querySelector("#finalTotalScore");
-const finalSummaryLine = document.querySelector("#finalSummaryLine");
 const roundReviewButtons = document.querySelector("#roundReviewButtons");
 const playAgainButton = document.querySelector("#playAgainButton");
 const copyResultsButton = document.querySelector("#copyResultsButton");
@@ -352,11 +347,6 @@ const refreshLocalizedUi = () => {
   if (finalTotalScore && mode === "summary") {
     finalTotalScore.textContent = `${accumulatedScore} / ${MAX_ROUNDS * SCORE_MAX}`;
   }
-  if (finalSummaryLine && mode === "summary") {
-    const totalDistance = sessionResults.reduce((sum, result) => sum + result.distanceKm, 0);
-    const averageDistance = sessionResults.length ? Math.round(totalDistance / sessionResults.length) : 0;
-    finalSummaryLine.textContent = t("summary_avg_distance", { distance: formatDistance(averageDistance) });
-  }
   if (roundReviewButtons && mode === "summary") {
     Array.from(roundReviewButtons.children).forEach((button, index) => {
       const result = sessionResults[index];
@@ -396,7 +386,9 @@ const geoguessrScore = (distanceKm) => {
 const formatDistance = (distanceKm) => {
   if (!isNumber(distanceKm)) return "0 km";
   if (distanceKm < 1) {
-    return `${Math.round(distanceKm * 1000)} m`;
+    const meters = Math.round(distanceKm * 1000);
+    if (distanceKm > 0 && meters === 0) return "1 m";
+    return `${meters} m`;
   }
   return `${Math.round(distanceKm)} km`;
 };
@@ -415,10 +407,7 @@ const buildResultsCopyText = () => {
     4: "4️⃣",
     5: "5️⃣"
   };
-  const totalDistance = sortedResults.reduce((sum, result) => sum + result.distanceKm, 0);
-  const averageDistance = Math.round(totalDistance / sortedResults.length);
   const totalLabel = t("summary_copy_total");
-  const avgLabel = t("summary_copy_avg_distance");
   const maxTotalScore = MAX_ROUNDS * SCORE_MAX;
 
   const lines = [
@@ -428,8 +417,7 @@ const buildResultsCopyText = () => {
       `${roundEmoji[result.round] || "📍"} ${result.score}/${SCORE_MAX} • ${formatDistance(result.distanceKm)}`
     ),
     "",
-    `🏆 ${totalLabel}: ${accumulatedScore}/${maxTotalScore}`,
-    `📏 ${avgLabel}: ${formatDistance(averageDistance)}`
+    `🏆 ${totalLabel}: ${accumulatedScore}/${maxTotalScore}`
   ];
 
   return lines.join("\n");
@@ -880,15 +868,8 @@ const showTotalResults = () => {
     resultSummary.textContent = "";
   }
 
-  const totalDistance = sessionResults.reduce((sum, result) => sum + result.distanceKm, 0);
-  const averageDistance = sessionResults.length ? Math.round(totalDistance / sessionResults.length) : 0;
-
   if (finalTotalScore) {
     finalTotalScore.textContent = `${accumulatedScore} / ${MAX_ROUNDS * SCORE_MAX}`;
-  }
-
-  if (finalSummaryLine) {
-    finalSummaryLine.textContent = t("summary_avg_distance", { distance: formatDistance(averageDistance) });
   }
 
   if (roundReviewButtons) {
