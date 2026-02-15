@@ -13,7 +13,7 @@ window.PHOTO_LOCATIONS = {
     { src: "Pictures/Carousel/IMG_4698(1).webp", label: "IMG_4698(1)", lat: 37.569090975949756, lng: 126.97929757555555 },
     { src: "Pictures/Carousel/IMG_5021.webp", label: "IMG_5021", lat: 35.189081730976255, lng: 129.22325990297318 },
     { src: "Pictures/Carousel/IMG_7100.webp", label: "IMG_7100", lat: 39.47917194783496, lng: -0.3758944668622982 },
-    { src: "Pictures/Carousel/IMG_7515.webp", label: "IMG_7515", lat: 62.5839361, lng: 11.3977111 },
+    { src: "Pictures/Carousel/IMG_7515.webp", label: "IMG_7515", lat: 62.58567726113342, lng: 11.39786651386915 },
     { src: "Pictures/Carousel/IMG_7578.webp", label: "IMG_7578", lat: 61.3951714912309, lng: 8.699459633266628 },
     { src: "Pictures/Carousel/IMG_7601.webp", label: "IMG_7601", lat: 61.38869395570761, lng: 8.810578330752183 },
     { src: "Pictures/Carousel/Kina%20iPhone%201221.webp", label: "Kina iPhone 1221", lat: 30.242880331574234, lng: 120.15993874447081 },
