@@ -42,6 +42,11 @@ window.PHOTO_LOCATIONS = {
     { src: "Pictures/Carousel/IMG_1091.webp", label: "IMG_1091", lat: 37.802940171179245, lng: -122.44821671341734 },
     { src: "Pictures/Carousel/IMG_1107.webp", label: "IMG_1107", lat: 37.80658503772361, lng: -122.45015342273985 },
     { src: "Pictures/Carousel/IMG_1139.webp", label: "IMG_1139", lat: 37.81132873951624, lng: -122.41077992531842 },
-    { src: "Pictures/Carousel/IMG_2106.webp", label: "IMG_2106", lat: 49.01386179039626, lng: 8.403709881608583 }
+    { src: "Pictures/Carousel/IMG_2106.webp", label: "IMG_2106", lat: 49.01386179039626, lng: 8.403709881608583 },
+    { src: "Pictures/Carousel/6WxARpfh.webp", label: "6WxARpfh", lat: 59.94930249128698, lng: 10.76547774288827 },
+    { src: "Pictures/Carousel/6xDQR7C_.webp", label: "6xDQR7C_", lat: 61.24891131141778, lng: 8.906532528069777 },
+    { src: "Pictures/Carousel/LBZRgMOB.webp", label: "LBZRgMOB", lat: 62.575506679490395, lng: 11.384787733201605 },
+    { src: "Pictures/Carousel/dTcsi11q.webp", label: "dTcsi11q", lat: 59.20154113353515, lng: 10.955075243594598 },
+    
   ]
 };
