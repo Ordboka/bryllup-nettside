@@ -91,7 +91,7 @@ const translations = {
     nav_home: "Hjem",
     welcome_title: "Velkommen 🏔️",
     welcome_body:
-      "Vi har gleden av å invitere deg til bryllupet vårt på Beitostølen der Sandra vokste opp! På denne siden har vi samlet nyttig informasjon for helgen. Om det skulle være noe annet er det bare å ta kontakt med en av oss",
+      "Vi har gleden av å invitere deg til bryllupet vårt på Beitostølen, der Sandra vokste opp! På denne siden har vi samlet nyttig informasjon for helgen. Om det skulle være noe annet, er det bare å ta kontakt med en av oss.",
     stay_title: "Forslag til overnatting 🛌",
     stay_intro:
       "Vi har ikke reservert overnatting, men her er våre forslag til steder å bo.",
