@@ -262,13 +262,14 @@ section {
   display: grid;
   gap: 1.5rem;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  align-items: stretch;
+  align-items: start;
   width: 100%;
 }
 
 .stay-card {
   width: 100%;
   min-width: 0;
+  align-self: start;
   background: rgba(255, 255, 255, 0.8);
   border-radius: 20px;
   border: 1px solid rgba(47, 43, 40, 0.08);
@@ -322,13 +323,13 @@ span {
 .stay-card__image--bergo {
   background-image:
     linear-gradient(180deg, rgba(47, 43, 40, 0.08), rgba(47, 43, 40, 0.35)),
-    url('Pictures/Hotels/Bergo hotell.webp');
+    url('Pictures/Hotels/Valdres-BS-sirkel.avif');
 }
 
 .stay-card__image--cabin {
   background-image:
     linear-gradient(180deg, rgba(47, 43, 40, 0.08), rgba(47, 43, 40, 0.45)),
-    linear-gradient(135deg, rgba(108, 122, 85, 0.85), rgba(61, 77, 61, 0.9));
+    url('Pictures/Hotels/Beitostolen-hytter-camping.jpg');
 }
 
 .stay-card__image--beito {
@@ -343,7 +344,15 @@ span {
   padding: 1.1rem 1.3rem 1.3rem;
 }
 
+.stay-card__content h3 {
+  line-height: 1.2;
+  min-height: 2.5em;
+  margin: 0;
+}
+
 .stay-card__link {
+  display: inline-block;
+  line-height: 1.2;
   color: var(--pine);
   font-weight: 500;
   text-decoration: underline;
@@ -352,6 +361,61 @@ span {
 .stay-card__note {
   font-size: 0.95rem;
   color: var(--stone);
+}
+
+.stay-card__subnote {
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--stone);
+}
+
+.stay-card__details {
+  margin-top: 0.2rem;
+}
+
+.stay-card__summary {
+  cursor: pointer;
+  color: var(--pine);
+  font-weight: 600;
+  list-style: none;
+}
+
+.stay-card__summary::-webkit-details-marker {
+  display: none;
+}
+
+.stay-card__summary::after {
+  content: " +";
+}
+
+.stay-card__details[open] .stay-card__summary::after {
+  content: " -";
+}
+
+.stay-card__details-content {
+  margin-top: 0.45rem;
+  display: grid;
+  gap: 0.45rem;
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+
+.stay-card__rates {
+  margin: 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.stay-card__offer-note {
+  color: var(--stone);
+  font-style: italic;
+}
+
+.stay-card__email {
+  color: var(--pine);
+  text-decoration: underline;
+  word-break: break-all;
 }
 
 .travel {

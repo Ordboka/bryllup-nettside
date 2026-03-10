@@ -25,15 +25,29 @@ const translations = {
       "We are delighted to invite you to our wedding in Beitostølen, where Sandra grew up! On this page, we have gathered useful information for the weekend. If there is anything else, just get in touch with one of us.",
     stay_title: "Where to stay 🛌",
     stay_intro:
-      "We have not reserved any accommodation, but here are our suggested places to stay.",
+      "We have not reserved any accommodation, but here are our suggested places to stay. We have recieved offers for some of the accommodations which you can see below.",
     stay_walkable:
       "The venue is in the town center, so all three hotels are within walking distance.",
-    stay_ridder: "Riddergården",
-    stay_bergo: "Bergo Hotell",
-    stay_cabin: "Rent a private cabin",
+    stay_ridder: "Riddergaarden",
+    stay_bergo: "Valdres Booking Service",
+    stay_cabin: "Beitostølen hytter & camping",
     stay_cabin_note: "Explore local cabins in the area.",
-    stay_beito_resort: "Beito Resort Hotel",
+    stay_beito_resort: "Beito Resort",
+    stay_beito_discount: "20% discount with code Bryllup.",
     stay_link: "Visit website",
+    stay_ridder_offer_toggle: "View offer details",
+    stay_ridder_offer_1: "1 person in apartment: kr 1.890,- per night",
+    stay_ridder_offer_2: "2 people in shared apartment: kr 2.290,- per night",
+    stay_ridder_offer_3: "3 people in shared apartment: kr 2.690,- per night",
+    stay_ridder_offer_4: "4 people in shared apartment: kr 2.990,- per night",
+    stay_ridder_offer_includes:
+      "The price includes breakfast every day and one two-hour entrance to Ridderbadet.",
+    stay_ridder_offer_note:
+      "*The offer applies to a 33 sqm studio apartment with a double bed and bunk bed.*",
+    stay_ridder_offer_contact:
+      "For booking, questions, requests, and price inquiries for a larger apartment, contact:",
+    stay_booking_contact:
+      "Contact Ane at post@valdresbookingservice.no for 15-20% off. Mention Sandra&Benjamin wedding.",
     travel_title: "How to get to Beitostølen 🚗",
     travel_lead: "Choose the option that fits your trip.",
     travel_drive_title: "Drive 🚙",
@@ -94,15 +108,29 @@ const translations = {
       "Vi har gleden av å invitere deg til bryllupet vårt på Beitostølen, der Sandra vokste opp! På denne siden har vi samlet nyttig informasjon for helgen. Om det skulle være noe annet, er det bare å ta kontakt med en av oss.",
     stay_title: "Forslag til overnatting 🛌",
     stay_intro:
-      "Vi har ikke reservert overnatting, men her er våre forslag til steder å bo.",
+      "Vi har ikke reservert overnatting, men her er våre forslag til steder å bo. Vi har mottatt tilbud for noen av overnattingsstedene, som du kan se nedenfor.",
     stay_walkable:
       "Lokalet ligger i sentrum, så alle tre hotellene er i gangavstand.",
-    stay_ridder: "Riddergården",
-    stay_bergo: "Bergo Hotell",
-    stay_cabin: "Lei en privat hytte",
+    stay_ridder: "Riddergaarden",
+    stay_bergo: "Valdres Booking Service",
+    stay_cabin: "Beitostølen hytter & camping",
     stay_cabin_note: "Se etter lokale hytter i området.",
-    stay_beito_resort: "Beito Resort Hotel",
+    stay_beito_resort: "Beito Resort",
+    stay_beito_discount: "20% rabatt med koden Bryllup.",
     stay_link: "Besøk nettsiden",
+    stay_ridder_offer_toggle: "Se tilbudsdetaljer",
+    stay_ridder_offer_1: "1 person i leilighet: kr 1.890,- per natt",
+    stay_ridder_offer_2: "2 personer i delt leilighet: kr 2.290,- per natt",
+    stay_ridder_offer_3: "3 personer i delt leilighet: kr 2.690,- per natt",
+    stay_ridder_offer_4: "4 personer i delt leilighet: kr 2.990,- per natt",
+    stay_ridder_offer_includes:
+      "Prisen inkluderer frokost hver dag samt én inngang på to timer i Ridderbadet.",
+    stay_ridder_offer_note:
+      "*Tilbudet gjelder Studioleilighet på 33 kvm, med dobbeltseng og køyeseng*",
+    stay_ridder_offer_contact:
+      "For bestilling, spørsmål, ønsker og prisforespørsel om større leilighet, kan henvendelse rettes til:",
+    stay_booking_contact:
+      "Kontakt Ane på post@valdresbookingservice.no for 15-20%. Henvis til bryllup Sandra&Benjamin.",
     travel_title: "Slik kommer du deg til Beitostølen 🚗",
     travel_lead: "Velg alternativet som passer reisen din.",
     travel_drive_title: "Kjør 🚙",
@@ -144,8 +172,13 @@ const translatable = document.querySelectorAll("[data-i18n]");
 const siteHeader = document.querySelector(".site-header");
 const navToggle = document.querySelector(".nav-toggle");
 const navLinks = document.querySelectorAll(".site-nav a");
+const stayGrid = document.querySelector(".stay__grid");
+const stayCards = stayGrid ? Array.from(stayGrid.querySelectorAll(".stay-card")) : [];
+const stayCardDetails = stayGrid ? Array.from(stayGrid.querySelectorAll(".stay-card__details")) : [];
 const LANGUAGE_STORAGE_KEY = "wedding_lang";
 let activeLanguage = "en";
+let stayCardHeightFrame = null;
+let isSyncingStayCardHeights = false;
 
 const interpolate = (template, values = {}) =>
   template.replace(/\{(\w+)\}/g, (_match, key) =>
@@ -201,7 +234,47 @@ const setLanguage = (lang) => {
   );
   updateGalleryItemLabels(lang);
   setStoredLanguage(lang);
+  scheduleStayCardHeightSync();
 };
+
+const syncStayCardHeights = () => {
+  if (!stayCards.length) return;
+
+  isSyncingStayCardHeights = true;
+  stayCards.forEach((card) => {
+    card.style.minHeight = "";
+  });
+
+  const openStates = stayCardDetails.map((details) => details.open);
+  stayCardDetails.forEach((details) => {
+    details.open = false;
+  });
+
+  const tallestClosedCard = stayCards.reduce((maxHeight, card) => {
+    return Math.max(maxHeight, card.getBoundingClientRect().height);
+  }, 0);
+
+  openStates.forEach((isOpen, index) => {
+    stayCardDetails[index].open = isOpen;
+  });
+
+  if (tallestClosedCard > 0) {
+    const minHeight = `${Math.ceil(tallestClosedCard)}px`;
+    stayCards.forEach((card) => {
+      card.style.minHeight = minHeight;
+    });
+  }
+
+  isSyncingStayCardHeights = false;
+};
+
+function scheduleStayCardHeightSync() {
+  if (!stayCards.length || stayCardHeightFrame !== null) return;
+  stayCardHeightFrame = window.requestAnimationFrame(() => {
+    stayCardHeightFrame = null;
+    syncStayCardHeights();
+  });
+}
 
 switchButtons.forEach((btn) => {
   btn.addEventListener("click", () => setLanguage(btn.dataset.lang));
@@ -210,6 +283,19 @@ switchButtons.forEach((btn) => {
 const browserLang = (navigator.language || "").toLowerCase();
 const isNorwegian = browserLang.startsWith("no") || browserLang.startsWith("nb") || browserLang.startsWith("nn");
 setLanguage(getStoredLanguage() || (isNorwegian ? "no" : "en"));
+
+if (stayCardDetails.length) {
+  stayCardDetails.forEach((details) => {
+    details.addEventListener("toggle", () => {
+      if (isSyncingStayCardHeights) return;
+      scheduleStayCardHeightSync();
+    });
+  });
+
+  window.addEventListener("resize", scheduleStayCardHeightSync);
+  window.addEventListener("load", scheduleStayCardHeightSync);
+  scheduleStayCardHeightSync();
+}
 
 const closeMobileMenu = () => {
   if (!siteHeader || !navToggle) return;
