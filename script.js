@@ -65,14 +65,17 @@ const translations = {
     dress_value: "Mørk dress",
     rsvp_title: "RSVP ✉️",
     rsvp_body: "Please let one of us know if you can make it, by the 1st of July.",
+    toastmasters_title: "Toastmasters 🎤",
+    toastmasters_body:
+      "If you would like to give a speech or arrange a performance, please contact one of our toastmasters.",
     gift_title: "Gift list 🎁",
     gift_body:
-      "This is a work in progress, and we will update this section closer to the event. However, we do not expect our guests to bring a gift as we think celebrating this weekend with us is a gift enough!",
+      "If you would like to give us a gift, we would appreciate a contribution towards our honeymoon. This can be transferred to account 18021985704. Please include your name with the gift.",
     schedule_title: "Weekend of events 📅",
     fri_label: "Friday",
     fri_optional_badge: "Optional",
     fri_event:
-      "Informal optional gathering for anyone that arrives on Friday. No food will be served, just good vibes",
+      "Informal optional gathering for anyone arriving on Friday. Soup will be served.",
     sat_label: "Saturday",
     sat_ceremony: "Ceremony",
     sat_dinner: "Dinner",
@@ -148,14 +151,17 @@ const translations = {
     dress_value: "Mørk dress",
     rsvp_title: "Svar innen ✉️",
     rsvp_body: "Gi en av oss beskjed om du kan komme innen 1. juli.",
+    toastmasters_title: "Toastmastere 🎤",
+    toastmasters_body:
+      "Hvis du/dere ønsker å holde tale eller innslag, ta kontakt med en av toastmasterne.",
     gift_title: "Gaveliste 🎁",
     gift_body:
-      "Gavelisten er under arbeid, og vi oppdaterer denne delen nærmere bryllupet. Vi forventer ikke at gjestene våre tar med gave, for vi synes det å feire denne helgen med oss er gave nok!",
+      "Hvis du/dere ønsker å gi gave, så ønsker vi oss bidrag til vår bryllupsreise. Dette kan overføres til konto 18021985704. Skriv gjerne hvem gaven er fra.",
     schedule_title: "Helgens program 📅",
     fri_label: "Fredag",
     fri_optional_badge: "Valgfritt",
     fri_event:
-      "Uformell valgfri samling for de som kommer på fredag. Det blir ikke servert mat, bare god stemning.",
+      "Uformell valgfri samling for de som kommer på fredag. Det blir servert suppe.",
     sat_label: "Lørdag",
     sat_ceremony: "Vielse",
     sat_dinner: "Middag",

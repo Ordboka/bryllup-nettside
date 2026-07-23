@@ -240,6 +240,32 @@ section {
   box-shadow: 0 14px 30px rgba(47, 43, 40, 0.08);
 }
 
+.info__contacts {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+  list-style: none;
+}
+
+.info__contacts li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+}
+
+.info__contacts li span {
+  font-weight: 500;
+}
+
+.info__contacts li span::after {
+  content: ":";
+}
+
+.info__contacts a {
+  color: var(--pine);
+  text-underline-offset: 0.2em;
+}
+
 .stay {
   display: grid;
   gap: 1.25rem;
