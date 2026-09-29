@@ -11,6 +11,7 @@
       albumNote: 'Google Photo · Opens in a new tab.',
       original: 'Original wedding website',
       photoAlt: 'Sandra and Benjamin kissing in the mountains on their wedding day',
+      photoCredit: 'Photo: Geir Hagen',
     },
     no: {
       title: 'Tusen takk · Sandra & Benjamin',
@@ -23,6 +24,7 @@
       albumNote: 'Google Photo · Åpnes i en ny fane.',
       original: 'Den opprinnelige bryllupssiden',
       photoAlt: 'Sandra og Benjamin kysser på fjellet på bryllupsdagen sin',
+      photoCredit: 'Foto: Geir Hagen',
     },
   };
   const setLanguage = (language) => {

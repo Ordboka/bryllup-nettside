@@ -46,6 +46,12 @@ body {
   align-items: center;
 }
 .portrait { margin: 0; }
+.portrait figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: right;
+}
 .portrait img {
   display: block;
   width: 100%;
